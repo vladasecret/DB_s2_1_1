@@ -9,22 +9,24 @@ using DB_s2_1_1.EntityModels;
 
 namespace DB_s2_1_1.Controllers
 {
-    public class StationsController : Controller
+    public class RoutesController : Controller
     {
         private readonly TrainsContext _context;
 
-        public StationsController(TrainsContext context)
+        public RoutesController(TrainsContext context)
         {
             _context = context;
         }
 
-        // GET: Stations
+        // GET: Routes
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Stations.ToListAsync());
+            
+            var trainsContext = _context.Routes.Include(r => r.Station);
+            return View(await trainsContext.ToListAsync());
         }
 
-        // GET: Stations/Details/5
+        // GET: Routes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -32,39 +34,42 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var station = await _context.Stations
+            var route = await _context.Routes
+                .Include(r => r.Station)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (station == null)
+            if (route == null)
             {
                 return NotFound();
             }
 
-            return View(station);
+            return View(route);
         }
 
-        // GET: Stations/Create
+        // GET: Routes/Create
         public IActionResult Create()
         {
+            ViewData["StationId"] = getStationsInfo();
             return View();
         }
 
-        // POST: Stations/Create
+        // POST: Routes/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Name,City")] Station station)
+        public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,StationOrder")] Route route)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(station);
+                _context.Add(route);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            return View(station);
+            ViewData["StationId"] = getStationsInfo();
+            return View(route);
         }
 
-        // GET: Stations/Edit/5
+        // GET: Routes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -72,22 +77,23 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var station = await _context.Stations.FindAsync(id);
-            if (station == null)
+            var route = await _context.Routes.FindAsync(id);
+            if (route == null)
             {
                 return NotFound();
             }
-            return View(station);
+            ViewData["StationId"] = getStationsInfo();
+            return View(route);
         }
 
-        // POST: Stations/Edit/5
+        // POST: Routes/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Name,City")] Station station)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,StationId,StationOrder")] Route route)
         {
-            if (id != station.Id)
+            if (id != route.Id)
             {
                 return NotFound();
             }
@@ -96,12 +102,12 @@ namespace DB_s2_1_1.Controllers
             {
                 try
                 {
-                    _context.Update(station);
+                    _context.Update(route);
                     await _context.SaveChangesAsync();
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!StationExists(station.Id))
+                    if (!RouteExists(route.Id))
                     {
                         return NotFound();
                     }
@@ -112,10 +118,11 @@ namespace DB_s2_1_1.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            return View(station);
+            ViewData["StationId"] = getStationsInfo();
+            return View(route);
         }
 
-        // GET: Stations/Delete/5
+        // GET: Routes/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -123,30 +130,35 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var station = await _context.Stations
+            var route = await _context.Routes
+                .Include(r => r.Station)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (station == null)
+            if (route == null)
             {
                 return NotFound();
             }
 
-            return View(station);
+            return View(route);
         }
 
-        // POST: Stations/Delete/5
+        // POST: Routes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var station = await _context.Stations.FindAsync(id);
-            _context.Stations.Remove(station);
+            var route = await _context.Routes.FindAsync(id);
+            _context.Routes.Remove(route);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
-
-        private bool StationExists(int id)
+        private SelectList getStationsInfo()
         {
-            return _context.Stations.Any(e => e.Id == id);
+            return new SelectList(_context.Stations.Select(e => new { Id = e.Id, Name = $"{e.Name}" + ((e.City.Length > 0) ? $" ({e.City})" : "") }), "Id", "Name");
+        }
+
+        private bool RouteExists(int id)
+        {
+            return _context.Routes.Any(e => e.Id == id);
         }
     }
 }

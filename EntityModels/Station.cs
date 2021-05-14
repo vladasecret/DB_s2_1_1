@@ -15,7 +15,8 @@ namespace DB_s2_1_1.EntityModels
         [Display(Name = "Station name")]
         public string Name { get; set; }
 
-
+        [Display(Name = "Station city")]
+        public string? City { get; set; }
         public ICollection<Train> Trains { get; set; }
         public ICollection<Employee> Employees { get; set; }
         public ICollection<Route> Routes { get; set; }
