@@ -19,10 +19,14 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Routes
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int routeIdFilter)
         {
-            
-            var trainsContext = _context.Routes.Include(r => r.Station);
+            ViewData["RouteIdFilter"] = routeIdFilter == 0 ? null : routeIdFilter;
+            var trainsContext = routeIdFilter == 0 ?
+                _context.Routes.Include(r => r.Station)
+                : _context.Routes
+                .Where(e => e.RouteId == routeIdFilter)
+                .Include(r => r.Station);
             return View(await trainsContext.ToListAsync());
         }
 
@@ -59,11 +63,22 @@ namespace DB_s2_1_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,StationOrder")] Route route)
         {
-            if (ModelState.IsValid)
+            if (StationOrderInRoute(route.RouteId, route.StationOrder))
             {
-                _context.Add(route);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", $"Station with order number {route.StationOrder} already exists in rout with id {route.RouteId}.");
+            }
+            else if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Add(route);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (DbUpdateException)
+                {
+                    ModelState.AddModelError("", $"The row with values (Route id: {route.RouteId}, Station id: {route.StationId}) already exists.");
+                }
             }
             ViewData["StationId"] = getStationsInfo();
             return View(route);
@@ -97,26 +112,36 @@ namespace DB_s2_1_1.Controllers
             {
                 return NotFound();
             }
-
-            if (ModelState.IsValid)
+            if (StationOrderInRoute(route.RouteId, route.StationOrder))
+            {
+                ModelState.AddModelError("", $"Station with order number {route.StationOrder} already exists in rout with id {route.RouteId}.");
+            }
+            else if (ModelState.IsValid)
             {
                 try
                 {
-                    _context.Update(route);
-                    await _context.SaveChangesAsync();
+                    try
+                    {
+                        _context.Update(route);
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!RouteExists(route.Id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
+                catch (DbUpdateException)
                 {
-                    if (!RouteExists(route.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    ModelState.AddModelError("", $"The row with values (Route id: {route.RouteId}, Station id: {route.StationId}) already exists.");
                 }
-                return RedirectToAction(nameof(Index));
             }
             ViewData["StationId"] = getStationsInfo();
             return View(route);
@@ -159,6 +184,11 @@ namespace DB_s2_1_1.Controllers
         private bool RouteExists(int id)
         {
             return _context.Routes.Any(e => e.Id == id);
+        }
+
+        private bool StationOrderInRoute(int routeId, int order)
+        {
+            return _context.Routes.Any(e => e.RouteId == routeId && e.StationOrder == order);
         }
     }
 }
