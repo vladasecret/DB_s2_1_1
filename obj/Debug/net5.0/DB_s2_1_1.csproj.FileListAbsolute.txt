@@ -160,3 +160,8 @@ C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Detail
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Edit.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Index.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\DB_s2_1_1.csprojAssemblyReference.cache
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\Create.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\Delete.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\Details.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\Edit.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\Index.cshtml.g.cs

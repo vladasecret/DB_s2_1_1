@@ -1,0 +1,48 @@
+﻿@model DB_s2_1_1.EntityModels.Train
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+<h4>Train</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="Edit">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <div class="form-group">
+                <label asp-for="RouteId" class="control-label">@Html.DisplayNameFor(model => model.RouteId)</label>
+                <select asp-for="RouteId" class="form-control" asp-items="ViewBag.RouteId"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="StationId" class="control-label">@Html.DisplayNameFor(model => model.Station)</label>
+                <select asp-for="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
+                <span asp-validation-for="StationId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="CategoryId" class="control-label">@Html.DisplayNameFor(model => model.Category)</label>
+                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
+                <span asp-validation-for="CategoryId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SeatsQty" class="control-label">@Html.DisplayNameFor(model => model.SeatsQty)</label>
+                <input asp-for="SeatsQty" type="number" step="1" min="20"  class="form-control" />
+                <span asp-validation-for="SeatsQty" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
