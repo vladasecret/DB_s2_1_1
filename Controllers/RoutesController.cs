@@ -28,7 +28,7 @@ namespace DB_s2_1_1.Controllers
                 : _context.Routes
                 .Where(e => e.RouteId == routeIdFilter)
                 .Include(r => r.Station);
-            return View(await trainsContext.GetPaged(page, 2));
+            return View(await trainsContext.GetPaged(page));
         }
 
         // GET: Routes/Details/5

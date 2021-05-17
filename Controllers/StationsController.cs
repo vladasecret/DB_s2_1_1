@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
+using DB_s2_1_1.PagedResult;
 
 namespace DB_s2_1_1.Controllers
 {
@@ -19,9 +20,9 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Stations
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Stations.ToListAsync());
+            return View(await _context.Stations.AsNoTracking().GetPaged(page));
         }
 
         // GET: Stations/Details/5
@@ -33,6 +34,7 @@ namespace DB_s2_1_1.Controllers
             }
 
             var station = await _context.Stations
+                .AsNoTracking()
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (station == null)
             {

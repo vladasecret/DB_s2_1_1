@@ -1,0 +1,41 @@
+﻿@model IEnumerable<Employee>
+@using DB_s2_1_1.EntityModels
+
+@{
+    ViewData["Title"] = "Edit train brigade";
+}
+
+<form>
+    <h4>Employees</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    @Html.DisplayNameFor(model => model.Id);
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.FIO);
+                </th>
+                <th>
+                    @Html.DisplayNameFor(model => model.StationId);
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <input name="SelectedEmpl" value="@item.Id"/>
+                    </td>
+                    <td>
+                        @item.FIO
+                    </td>
+                    <td>
+                        @item.StationId
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</form>

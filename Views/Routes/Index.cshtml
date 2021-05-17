@@ -65,12 +65,12 @@
         <input type="number" name="RouteIdFilter" value="@ViewData["RouteIdFilter"]" hidden/>
         @for (int i = Math.Max(Model.CurrentPage - 4, 1); i < Model.CurrentPage; ++i)
         {
-            <button type="submit" name="Page" value="@i">@i</button>
+            <button class="btn btn-primary" type="submit" name="Page" value="@i">@i</button>
         }
-        <button type="submit" name="Page" value="@Model.CurrentPage" disabled>@Model.CurrentPage</button>
+        <button class="btn btn-primary" type="submit" name="Page" value="@Model.CurrentPage" disabled>@Model.CurrentPage</button>
         @for (int i = Model.CurrentPage + 1; i <= Math.Min(Model.CurrentPage + 4, Model.PageCount); ++i)
         {
-            <button type="submit" name="Page" value="@i">@i</button>
+            <button class="btn btn-primary" type="submit" name="Page" value="@i">@i</button>
         }
     </div>
 </form>

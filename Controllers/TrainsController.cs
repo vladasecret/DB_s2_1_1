@@ -39,9 +39,8 @@ namespace DB_s2_1_1.Controllers
 
             if (searchSeats > 0)
                 predicate.And(e => e.SeatsQty >= searchSeats);
-
-            var test = _context.Stations
-                .FromSqlRaw("insert Stations(Name) values('lalala')");
+            if (searchRoute > 0)
+                predicate.And(e => e.RouteId == searchRoute);
 
             var trainsContext = _context.Trains
                 .AsNoTracking()
@@ -170,6 +169,24 @@ namespace DB_s2_1_1.Controllers
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
             ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View(train);
+        }
+
+        // GET: Trains/Edit/5
+        public async Task<IActionResult> EditBrigade(int? id)
+        {
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            var train = await _context.Trains.FindAsync(id);
+            if (train == null)
+            {
+                return NotFound();
+            }
+            ViewData["SelectedEmpls"] = train.Employees;            
+            
+            return View(await _context.Employees.AsNoTracking().ToListAsync());
         }
 
         // GET: Trains/Delete/5

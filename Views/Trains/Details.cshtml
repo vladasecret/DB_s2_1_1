@@ -41,8 +41,12 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<hr />
 <div>
-    <h4>Emplyees</h4>
+    <div>
+        <h4>Train brigade</h4> |
+        <a asp-action="EditBrigade" asp-route-id="@Model.Id">Edit brigade</a>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -58,7 +62,7 @@
             {
                 <tr>
                     <td>
-                        <input type="checkbox" value="@item.Id" name="SelectedEml"/>
+                        @item.Id
                     </td>
                 </tr>
                 <tr>
