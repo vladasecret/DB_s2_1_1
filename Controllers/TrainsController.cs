@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using LinqKit;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
+using DB_s2_1_1.ViewModel;
+using DB_s2_1_1.PagedResult;
+
 
 namespace DB_s2_1_1.Controllers
 {
@@ -19,10 +23,39 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Trains
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int searchRoute, int searchCategory, int searchSeats, int page = 1)
         {
-            var trainsContext = _context.Trains.Include(t => t.Category).Include(t => t.Station);
-            return View(await trainsContext.ToListAsync());
+            ViewData["CategoryFilter"] = searchCategory;
+            ViewData["RouteIdFilter"] = searchRoute > 0 ? searchRoute : null;
+            ViewData["SeatsFilter"] = searchSeats > 0 ? searchSeats : null;
+
+            ViewData["RouteId"] = await _context.Routes.Select(e => e.RouteId).Distinct().ToListAsync();
+            ViewData["Categories"] = new SelectList(_context.Categories.AsNoTracking(), "Id", "Name", searchCategory);
+
+            var predicate = PredicateBuilder.New<Train>(true);
+
+            if (searchCategory != 0)
+                predicate.And(e => e.CategoryId == searchCategory);
+
+            if (searchSeats > 0)
+                predicate.And(e => e.SeatsQty >= searchSeats);
+
+            var test = _context.Stations
+                .FromSqlRaw("insert Stations(Name) values('lalala')");
+
+            var trainsContext = _context.Trains
+                .AsNoTracking()
+                .Where(predicate)
+                .Select(e => new TrainsViewModel
+                {
+                    Id = e.Id,
+                    Category = e.Category.Name,
+                    SeatsQty = e.SeatsQty,
+                    Station = e.Station.Name,
+                    RouteId = e.RouteId
+                });
+
+            return View(await trainsContext.GetPaged(page));
         }
 
         // GET: Trains/Details/5
@@ -34,9 +67,18 @@ namespace DB_s2_1_1.Controllers
             }
 
             var train = await _context.Trains
-                .Include(t => t.Category)
-                .Include(t => t.Station)
+                .AsNoTracking()
+                .Select(e => new TrainsViewModel
+                {
+                    Id = e.Id,
+                    Category = e.Category.Name,
+                    SeatsQty = e.SeatsQty,
+                    Station = e.Station.Name,
+                    RouteId = e.RouteId,
+                    Employees = e.Employees
+                })
                 .FirstOrDefaultAsync(m => m.Id == id);
+            
             if (train == null)
             {
                 return NotFound();
@@ -50,7 +92,7 @@ namespace DB_s2_1_1.Controllers
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name");
-            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e=> new {RouteId = e.RouteId}).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View();
         }
 

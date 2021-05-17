@@ -26,8 +26,15 @@ using DB_s2_1_1.Models;
 #line default
 #line hidden
 #nullable disable
+#nullable restore
+#line 3 "C:\Users\vlada\source\repos\DB_s2_1_1\Views\_ViewImports.cshtml"
+using System.Data;
+
+#line default
+#line hidden
+#nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"d50a7f67cd6ddc703b51fbc4928434122744ad1e", @"/Views/Stations/Index.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"6d1487f39511c1829f3bef19b944e336119efd39", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"3a3790cb0502c37fffe326c6a6c363c21790dd38", @"/Views/_ViewImports.cshtml")]
     public class Views_Stations_Index : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<IEnumerable<DB_s2_1_1.EntityModels.Station>>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-action", "Create", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
@@ -68,7 +75,7 @@ using DB_s2_1_1.Models;
 #line hidden
 #nullable disable
             WriteLiteral("\r\n<h1>Stations</h1>\r\n\r\n<p>\r\n    ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e4528", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e4692", async() => {
                 WriteLiteral("Create New");
             }
             );
@@ -124,7 +131,7 @@ using DB_s2_1_1.Models;
 #line hidden
 #nullable disable
             WriteLiteral("\r\n            </td>\r\n            <td>\r\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e7286", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e7450", async() => {
                 WriteLiteral("Edit");
             }
             );
@@ -155,7 +162,7 @@ using DB_s2_1_1.Models;
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral(" |\r\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e9437", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e9601", async() => {
                 WriteLiteral("Details");
             }
             );
@@ -186,7 +193,7 @@ using DB_s2_1_1.Models;
             Write(__tagHelperExecutionContext.Output);
             __tagHelperExecutionContext = __tagHelperScopeManager.End();
             WriteLiteral(" |\r\n                ");
-            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e11594", async() => {
+            __tagHelperExecutionContext = __tagHelperScopeManager.Begin("a", global::Microsoft.AspNetCore.Razor.TagHelpers.TagMode.StartTagAndEndTag, "d50a7f67cd6ddc703b51fbc4928434122744ad1e11758", async() => {
                 WriteLiteral("Delete");
             }
             );

@@ -1,53 +1,101 @@
-﻿@model IEnumerable<DB_s2_1_1.EntityModels.Train>
+﻿@model DB_s2_1_1.PagedResult.PagedResult<DB_s2_1_1.ViewModel.TrainsViewModel>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Trains";
 }
 
-<h1>Index</h1>
+<h1>Trains</h1>
 
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <p>
+            Find by route id:
+            <input name="SearchRoute" list="routes" type="number" min="1" value="@ViewData["RouteIdFilter"]" />
+            <datalist id="routes" asp-items="ViewBag.RouteId">
+                @foreach (var item in ViewBag.RouteId)
+                {
+                    <option value="@item" />
+                }
+            </datalist>
+        </p>
+    </div>
+    <div class="form-actions no-color">
+        <p>
+            Find by category:
+            <select name="SearchCategory" asp-items="ViewBag.Categories">
+                <option value=0></option>
+            </select>
+        </p>
+    </div>
+    <div class="form-actions no-color">
+        <p>
+            Find by min seats: <input type="number" name="SearchSeats" min="1" value="@ViewData["SeatsFilter"]" />
+        </p>
+        <button type="submit" value="Search" class="btn btn-link">Search</button> |
+        <a asp-action="Index">Back to Full List</a>
+    </div>
+</form>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RouteId)
+                Route id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.SeatsQty)
+                Quantity of seats
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Category)
+                Category
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Station)
+                Station
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RouteId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.SeatsQty)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Station.Name)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model.Results)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.RouteId)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SeatsQty)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Category)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Station)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <input name="SearchRoute" type="number" value="@ViewData["RouteIdFilter"]" hidden />
+        <input name="SearchCategory" value="@ViewData["CategoryFilter"]" hidden />
+        <input name="SearchSeats" min="1" value="@ViewData["SeatsFilter"]" />
+
+        @for (int i = Math.Max(Model.CurrentPage - 4, 1); i < Model.CurrentPage; ++i)
+        {
+            <button type="submit" name="Page" value="@i">@i</button>
+        }
+        <button type="submit" name="Page" value="@Model.CurrentPage" disabled>@Model.CurrentPage</button>
+        @for (int i = Model.CurrentPage + 1; i <= Math.Min(Model.CurrentPage + 4, Model.PageCount); ++i)
+        {
+            <button type="submit" name="Page" value="@i">@i</button>
+        }
+    </div>
+</form>

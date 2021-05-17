@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
+using DB_s2_1_1.PagedResult;
 
 namespace DB_s2_1_1.Controllers
 {
@@ -19,9 +20,11 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Categories
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(int page = 1)
         {
-            return View(await _context.Categories.ToListAsync());
+            
+
+            return View(await _context.Categories.GetPaged(page));
         }
 
         // GET: Categories/Details/5

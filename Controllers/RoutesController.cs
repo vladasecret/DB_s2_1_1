@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
+using DB_s2_1_1.PagedResult;
 
 namespace DB_s2_1_1.Controllers
 {
@@ -19,7 +20,7 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Routes
-        public async Task<IActionResult> Index(int routeIdFilter)
+        public async Task<IActionResult> Index(int routeIdFilter, int page = 1)
         {
             ViewData["RouteIdFilter"] = routeIdFilter == 0 ? null : routeIdFilter;
             var trainsContext = routeIdFilter == 0 ?
@@ -27,7 +28,7 @@ namespace DB_s2_1_1.Controllers
                 : _context.Routes
                 .Where(e => e.RouteId == routeIdFilter)
                 .Include(r => r.Station);
-            return View(await trainsContext.ToListAsync());
+            return View(await trainsContext.GetPaged(page, 2));
         }
 
         // GET: Routes/Details/5

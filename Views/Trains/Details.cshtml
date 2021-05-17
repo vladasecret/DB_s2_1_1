@@ -1,4 +1,5 @@
-﻿@model DB_s2_1_1.EntityModels.Train
+﻿@model DB_s2_1_1.ViewModel.TrainsViewModel
+@using DB_s2_1_1.EntityModels
 
 @{
     ViewData["Title"] = "Details";
@@ -10,33 +11,63 @@
     <h4>Train</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.RouteId)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.RouteId)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.SeatsQty)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.SeatsQty)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Category)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Category)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Station)
         </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Station.Name)
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.Station)
         </dd>
     </dl>
 </div>
 <div>
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
+</div>
+<div>
+    <h4>Emplyees</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Id
+                </th>
+                <th>FIO</th>
+                <th>Station</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Employee item in Model.Employees)
+            {
+                <tr>
+                    <td>
+                        <input type="checkbox" value="@item.Id" name="SelectedEml"/>
+                    </td>
+                </tr>
+                <tr>
+                    <td>@item.FIO</td>
+                </tr>
+                <tr>
+                    <td>@item.StationId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </div>

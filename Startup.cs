@@ -49,6 +49,15 @@ namespace DB_s2_1_1
                 }
                 });
 
+            services.AddDbContext<ManualRawSqlContext>(options => {
+                options.UseSqlServer(Configuration.GetConnectionString("ManualRawSqlConnection"));
+                if (HostingEnvironment.IsDevelopment())
+                {
+                    options.EnableSensitiveDataLogging();
+                    options.UseLoggerFactory(dbContextLoggerFactory);
+                }
+            });
+
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddControllersWithViews();

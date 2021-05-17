@@ -1,4 +1,4 @@
-﻿@model IEnumerable<DB_s2_1_1.EntityModels.Route>
+﻿@model DB_s2_1_1.PagedResult.PagedResult<DB_s2_1_1.EntityModels.Route>
 
 @{
     ViewData["Title"] = "Routes";
@@ -17,7 +17,7 @@
         <p>
             Find by route id: <input type="number" name="RouteIdFilter" min ="1" value="@ViewData["RouteIdFilter"]" />
         </p>
-        <input type="submit" value="Search" class="btn btn-default" /> |
+        <button type="submit" value="Search" class="btn btn-link">Search</button> |
         <a asp-action="Index">Back to Full List</a>
     </div>
 </form>
@@ -26,19 +26,19 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.RouteId)
+                Route Id
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StationOrder)
+                Station order
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Station)
+                Station
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var item in Model)
+        @foreach (var item in Model.Results)
         {
             <tr>
                 <td>
@@ -59,3 +59,18 @@
         }
     </tbody>
 </table>
+
+<form asp-action="Index" method="get">
+    <div class="form-actions no-color">
+        <input type="number" name="RouteIdFilter" value="@ViewData["RouteIdFilter"]" hidden/>
+        @for (int i = Math.Max(Model.CurrentPage - 4, 1); i < Model.CurrentPage; ++i)
+        {
+            <button type="submit" name="Page" value="@i">@i</button>
+        }
+        <button type="submit" name="Page" value="@Model.CurrentPage" disabled>@Model.CurrentPage</button>
+        @for (int i = Model.CurrentPage + 1; i <= Math.Min(Model.CurrentPage + 4, Model.PageCount); ++i)
+        {
+            <button type="submit" name="Page" value="@i">@i</button>
+        }
+    </div>
+</form>
