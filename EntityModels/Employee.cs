@@ -11,6 +11,7 @@ namespace DB_s2_1_1.EntityModels
         public string FIO { get; set; }
         public int StationId { get; set; }
 
+        public Station Station { get; set; }
         public ICollection<Train> Trains { get; set; }
     }
 }

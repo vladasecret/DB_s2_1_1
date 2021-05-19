@@ -67,6 +67,8 @@ namespace DB_s2_1_1.Controllers
 
             var train = await _context.Trains
                 .AsNoTracking()
+                .Include(t=> t.Employees)
+                .ThenInclude(empl=>empl.Station)
                 .Select(e => new TrainsViewModel
                 {
                     Id = e.Id,
@@ -77,7 +79,7 @@ namespace DB_s2_1_1.Controllers
                     Employees = e.Employees
                 })
                 .FirstOrDefaultAsync(m => m.Id == id);
-            
+
             if (train == null)
             {
                 return NotFound();
@@ -179,15 +181,47 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var train = await _context.Trains.FindAsync(id);
+            var train = await _context.Trains.Include(e=> e.Employees)
+                .ThenInclude(empl=>empl.Station)
+                .FirstOrDefaultAsync(e => e.Id == id);            
+                
             if (train == null)
             {
                 return NotFound();
             }
-            ViewData["SelectedEmpls"] = train.Employees;            
-            
-            return View(await _context.Employees.AsNoTracking().ToListAsync());
+            ViewBag.Empls = await _context.Employees.AsNoTracking()
+                .Include(e => e.Station)
+                .Include(e=> e.Trains)
+                .ToListAsync();
+
+            return View(train);
         }
+
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditBrigade(int id, Train train, int[] SelectedEmpls)
+        {
+            Train newTrain = await _context.Trains.Include(t => t.Employees).FirstOrDefaultAsync(e => e.Id == train.Id);
+            if (newTrain == null)
+            {
+                return NotFound();
+            }
+            newTrain.Employees.Clear();
+            if (SelectedEmpls != null)
+            {
+                var empls = await _context.Employees.Where(e => SelectedEmpls.Contains(e.Id)).ToListAsync();
+                foreach (Employee empl in empls)
+                {
+                    newTrain.Employees.Add(empl);
+                }
+            }
+            _context.Entry(newTrain).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new {id = id});
+        }
+
 
         // GET: Trains/Delete/5
         public async Task<IActionResult> Delete(int? id)

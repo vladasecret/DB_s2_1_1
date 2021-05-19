@@ -1,41 +1,54 @@
-﻿@model IEnumerable<Employee>
+﻿@model Train
 @using DB_s2_1_1.EntityModels
 
 @{
     ViewData["Title"] = "Edit train brigade";
 }
 
-<form>
+<form asp-controller="Trains" asp-action="EditBrigade" method="post">
     <h4>Employees</h4>
     <table class="table">
         <thead>
             <tr>
+                <th></th>
                 <th>
-                    @Html.DisplayNameFor(model => model.Id);
+                    Id
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.FIO);
+                    FIO
                 </th>
                 <th>
-                    @Html.DisplayNameFor(model => model.StationId);
+                    Station
                 </th>
             </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model)
+            @foreach (Employee item in (List<Employee>)ViewBag.Empls)
             {
                 <tr>
                     <td>
-                        <input name="SelectedEmpl" value="@item.Id"/>
+                        
+                        <input type="checkbox" name="SelectedEmpls" value="@item.Id"
+                           @(Model.Employees.Where(empl => empl.Id == item.Id).Any()? "checked" : "") />
+
+                    </td>
+                    <td>
+                        @item.Id
                     </td>
                     <td>
                         @item.FIO
                     </td>
                     <td>
-                        @item.StationId
+                        @item.Station.Name
                     </td>
                 </tr>
             }
         </tbody>
     </table>
+    <input type="hidden" asp-for="Id" />
+    <input type="hidden" asp-for="RouteId" />
+    <input type="hidden" asp-for="StationId" />
+    <input type="hidden" asp-for="CategoryId" />
+    <input type="hidden" asp-for="SeatsQty" />
+    <button type="submit" class="btn btn-primary">Save</button>
 </form>

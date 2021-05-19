@@ -43,10 +43,8 @@
 </div>
 <hr />
 <div>
-    <div>
-        <h4>Train brigade</h4> |
-        <a asp-action="EditBrigade" asp-route-id="@Model.Id">Edit brigade</a>
-    </div>
+    <h4>Train brigade</h4>
+
     <table class="table">
         <thead>
             <tr>
@@ -64,14 +62,14 @@
                     <td>
                         @item.Id
                     </td>
-                </tr>
-                <tr>
+
                     <td>@item.FIO</td>
-                </tr>
-                <tr>
-                    <td>@item.StationId</td>
+                    <td>@item.Station?.Name</td>
                 </tr>
             }
         </tbody>
     </table>
+    <div>
+        <a asp-action="EditBrigade" asp-route-id="@Model.Id">Edit brigade</a>
+    </div>
 </div>

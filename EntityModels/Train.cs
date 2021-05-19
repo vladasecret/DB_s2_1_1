@@ -26,8 +26,8 @@ namespace DB_s2_1_1.EntityModels
 
         public Station Station { get; set; }
         //public Route Route { get; set; }
-       
-        public ICollection<Employee> Employees { get; set; }
+
+        public ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
         public ICollection<Waiting> Waitings { get; set; }
         

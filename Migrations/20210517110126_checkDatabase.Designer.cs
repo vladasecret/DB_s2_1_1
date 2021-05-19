@@ -4,14 +4,16 @@ using DB_s2_1_1.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DB_s2_1_1.Migrations
 {
     [DbContext(typeof(TrainsContext))]
-    partial class TrainsContextModelSnapshot : ModelSnapshot
+    [Migration("20210517110126_checkDatabase")]
+    partial class checkDatabase
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -283,13 +285,11 @@ namespace DB_s2_1_1.Migrations
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Employee", b =>
                 {
-                    b.HasOne("DB_s2_1_1.EntityModels.Station", "Station")
+                    b.HasOne("DB_s2_1_1.EntityModels.Station", null)
                         .WithMany("Employees")
                         .HasForeignKey("StationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Station");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Route", b =>

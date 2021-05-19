@@ -462,3 +462,8 @@ C:\Users\vlada\source\repos\DB_s2_1_1\bin\Debug\net5.0\Microsoft.AspNetCore.Mvc.
 C:\Users\vlada\source\repos\DB_s2_1_1\bin\Debug\net5.0\Microsoft.Extensions.DependencyModel.dll
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\DB_s2_1_1.MvcApplicationPartsAssemblyInfo.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Trains\EditBrigade.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Employees\Create.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Employees\Delete.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Employees\Details.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Employees\Edit.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Employees\Index.cshtml.g.cs
