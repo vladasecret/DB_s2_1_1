@@ -1,5 +1,6 @@
 ﻿@model Train
 @using DB_s2_1_1.EntityModels
+@using DB_s2_1_1.PagedResult
 
 @{
     ViewData["Title"] = "Edit train brigade";
@@ -23,13 +24,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (Employee item in (List<Employee>)ViewBag.Empls)
+            @foreach (Employee item in ((PagedResult<Employee>)ViewBag.Empls).Results)
             {
                 <tr>
                     <td>
-                        
+
                         <input type="checkbox" name="SelectedEmpls" value="@item.Id"
-                           @(Model.Employees.Where(empl => empl.Id == item.Id).Any()? "checked" : "") />
+                               @(Model.Employees.Where(empl => empl.Id == item.Id).Any() ? "checked" : "") />
 
                     </td>
                     <td>
@@ -45,10 +46,34 @@
             }
         </tbody>
     </table>
+
+    <div class="form-actions no-color">
+        @for (int i = Math.Max(ViewBag.Empls.CurrentPage - 4, 1); i < ViewBag.Empls.CurrentPage; ++i)
+        {
+            <button class="btn btn-primary" type="submit" name="Page" value="@i" formmethod="get">@i</button>
+        }
+        <button class="btn btn-primary" type="submit" name="Page" value="@ViewBag.Empls.CurrentPage" disabled formmethod="get">@ViewBag.Empls.CurrentPage</button>
+        @for (int i = ViewBag.Empls.CurrentPage + 1; i <= Math.Min(ViewBag.Empls.CurrentPage + 4, ViewBag.Empls.PageCount); ++i)
+        {
+            <button class="btn btn-primary" type="submit" name="Page" value="@i" formmethod="get">@i</button>
+        }
+    </div>
+    @if (ViewBag.Empls.PageCount > 1)
+    {
+        <p style="color:cornflowerblue">when switching to another page of the table, all unsaved items will be lost</p>
+    }
+    <hr />
+    <input type="hidden" name="CurPage" value="@ViewBag.CurPage"/>
     <input type="hidden" asp-for="Id" />
     <input type="hidden" asp-for="RouteId" />
     <input type="hidden" asp-for="StationId" />
     <input type="hidden" asp-for="CategoryId" />
     <input type="hidden" asp-for="SeatsQty" />
-    <button type="submit" class="btn btn-primary">Save</button>
+    <div class="form-actions no-color">
+        <button type="submit" class="btn btn-primary">Save</button>
+        <button type="reset" class="btn btn-primary">Reset</button>
+    </div>
+    <br />
+    <a asp-action="Details" asp-route-id="@Model.Id">Back</a>
 </form>
+

@@ -25,6 +25,7 @@ namespace DB_s2_1_1.Controllers
         // GET: Trains
         public async Task<IActionResult> Index(int searchRoute, int searchCategory, int searchSeats, int page = 1)
         {
+            
             ViewData["CategoryFilter"] = searchCategory;
             ViewData["RouteIdFilter"] = searchRoute > 0 ? searchRoute : null;
             ViewData["SeatsFilter"] = searchSeats > 0 ? searchSeats : null;
@@ -85,6 +86,12 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
+            ViewBag.Route = await _context.Routes
+                .AsNoTracking()
+                .Where(r => r.RouteId == train.RouteId)
+                .Include(r => r.Station)
+                .OrderBy(e=> e.StationOrder)
+                .ToListAsync();
             return View(train);
         }
 
@@ -174,8 +181,9 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Trains/Edit/5
-        public async Task<IActionResult> EditBrigade(int? id)
+        public async Task<IActionResult> EditBrigade(int? id, int page = 1)
         {
+            ViewBag.CurPage = page;
             if (id == null)
             {
                 return NotFound();
@@ -192,7 +200,7 @@ namespace DB_s2_1_1.Controllers
             ViewBag.Empls = await _context.Employees.AsNoTracking()
                 .Include(e => e.Station)
                 .Include(e=> e.Trains)
-                .ToListAsync();
+                .GetPaged(page);
 
             return View(train);
         }
@@ -200,7 +208,7 @@ namespace DB_s2_1_1.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBrigade(int id, Train train, int[] SelectedEmpls)
+        public async Task<IActionResult> EditBrigade(int id, Train train, int[] SelectedEmpls, int curPage)
         {
             Train newTrain = await _context.Trains.Include(t => t.Employees).FirstOrDefaultAsync(e => e.Id == train.Id);
             if (newTrain == null)
@@ -219,7 +227,7 @@ namespace DB_s2_1_1.Controllers
             _context.Entry(newTrain).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(Details), new {id = id});
+            return RedirectToAction(nameof(EditBrigade), new {id = id, page = curPage});
         }
 
 

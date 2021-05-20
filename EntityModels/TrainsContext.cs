@@ -11,8 +11,6 @@ namespace DB_s2_1_1.EntityModels
         public TrainsContext(DbContextOptions<TrainsContext> options) : base(options)
         {
         }
-
-        public DbSet<TransitRoute> TransitRoutes { get; set; }
         
         public DbSet<Route> Routes { get; set; }
         public DbSet<Station> Stations { get; set; }

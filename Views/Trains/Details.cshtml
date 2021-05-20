@@ -73,3 +73,38 @@
         <a asp-action="EditBrigade" asp-route-id="@Model.Id">Edit brigade</a>
     </div>
 </div>
+<hr />
+<div>
+    <h4>Route</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>
+                    Station id
+                </th>
+                <th>
+                    Station name
+                </th>
+                <th>
+                    Station order
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (Route item in ViewBag.Route)
+            {
+                <tr>
+                    <td>
+                        @item.StationId
+                    </td>
+                    <td>
+                        @item.Station.Name
+                    </td>
+                    <td>
+                        @item.StationOrder
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

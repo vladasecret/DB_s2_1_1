@@ -4,14 +4,16 @@ using DB_s2_1_1.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DB_s2_1_1.Migrations
 {
     [DbContext(typeof(TrainsContext))]
-    partial class TrainsContextModelSnapshot : ModelSnapshot
+    [Migration("20210519181408_delTRoute")]
+    partial class delTRoute
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -184,6 +186,24 @@ namespace DB_s2_1_1.Migrations
                     b.HasIndex("StationId");
 
                     b.ToTable("Trains");
+                });
+
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.TransitRoute", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<int>("StationOrder")
+                        .HasColumnType("int");
+
+                    b.Property<int>("TransitRouteId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("TransitRoutes");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.User", b =>
