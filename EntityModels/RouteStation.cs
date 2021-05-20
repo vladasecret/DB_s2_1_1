@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace DB_s2_1_1.EntityModels
 {
-    public class Route
+    public class RouteStation
     {
         [Display(Name = "Id")]
         public int Id { get; set; }

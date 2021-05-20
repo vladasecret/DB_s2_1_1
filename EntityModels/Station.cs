@@ -19,7 +19,7 @@ namespace DB_s2_1_1.EntityModels
         public string? City { get; set; }
         public ICollection<Train> Trains { get; set; }
         public ICollection<Employee> Employees { get; set; }
-        public ICollection<Route> Routes { get; set; }
+        public ICollection<RouteStation> Routes { get; set; }
         public ICollection<Timetable> Timetables { get; set; }
 
 

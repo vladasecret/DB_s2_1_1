@@ -12,7 +12,7 @@ namespace DB_s2_1_1.EntityModels
         {
         }
         
-        public DbSet<Route> Routes { get; set; }
+        public DbSet<RouteStation> RouteStations { get; set; }
         public DbSet<Station> Stations { get; set; }
         public DbSet<Timetable> Timetables{ get; set; }
         public DbSet<Employee> Employees { get; set; }
@@ -29,7 +29,7 @@ namespace DB_s2_1_1.EntityModels
                .HasIndex(e => new { e.Id, e.TrainId, e.StationId })
                .IsUnique();
             
-            modelBuilder.Entity<Route>()
+            modelBuilder.Entity<RouteStation>()
               .HasIndex(e => new { e.RouteId, e.StationId })
                 .IsUnique();
             modelBuilder.Entity<Category>()

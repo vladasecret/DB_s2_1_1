@@ -24,8 +24,8 @@ namespace DB_s2_1_1.Controllers
         {
             ViewData["RouteIdFilter"] = routeIdFilter == 0 ? null : routeIdFilter;
             var trainsContext = routeIdFilter == 0 ?
-                _context.Routes.Include(r => r.Station)
-                : _context.Routes
+                _context.RouteStations.Include(r => r.Station)
+                : _context.RouteStations
                 .Where(e => e.RouteId == routeIdFilter)
                 .Include(r => r.Station);
             return View(await trainsContext.GetPaged(page));
@@ -39,7 +39,7 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var route = await _context.Routes
+            var route = await _context.RouteStations
                 .Include(r => r.Station)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (route == null)
@@ -62,7 +62,7 @@ namespace DB_s2_1_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,StationOrder")] Route route)
+        public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,StationOrder")] RouteStation route)
         {
             if (StationOrderInRoute(route.RouteId, route.StationOrder))
             {
@@ -93,7 +93,7 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var route = await _context.Routes.FindAsync(id);
+            var route = await _context.RouteStations.FindAsync(id);
             if (route == null)
             {
                 return NotFound();
@@ -107,7 +107,7 @@ namespace DB_s2_1_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,StationId,StationOrder")] Route route)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,StationId,StationOrder")] RouteStation route)
         {
             if (id != route.Id)
             {
@@ -156,7 +156,7 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var route = await _context.Routes
+            var route = await _context.RouteStations
                 .Include(r => r.Station)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (route == null)
@@ -172,8 +172,8 @@ namespace DB_s2_1_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var route = await _context.Routes.FindAsync(id);
-            _context.Routes.Remove(route);
+            var route = await _context.RouteStations.FindAsync(id);
+            _context.RouteStations.Remove(route);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
@@ -184,12 +184,12 @@ namespace DB_s2_1_1.Controllers
 
         private bool RouteExists(int id)
         {
-            return _context.Routes.Any(e => e.Id == id);
+            return _context.RouteStations.Any(e => e.Id == id);
         }
 
         private bool StationOrderInRoute(int routeId, int order)
         {
-            return _context.Routes.Any(e => e.RouteId == routeId && e.StationOrder == order);
+            return _context.RouteStations.Any(e => e.RouteId == routeId && e.StationOrder == order);
         }
     }
 }

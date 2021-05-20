@@ -30,7 +30,7 @@ namespace DB_s2_1_1.Controllers
             ViewData["RouteIdFilter"] = searchRoute > 0 ? searchRoute : null;
             ViewData["SeatsFilter"] = searchSeats > 0 ? searchSeats : null;
 
-            ViewData["RouteId"] = await _context.Routes.Select(e => e.RouteId).Distinct().ToListAsync();
+            ViewData["RouteId"] = await _context.RouteStations.Select(e => e.RouteId).Distinct().ToListAsync();
             ViewData["Categories"] = new SelectList(_context.Categories.AsNoTracking(), "Id", "Name", searchCategory);
 
             var predicate = PredicateBuilder.New<Train>(true);
@@ -86,7 +86,7 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            ViewBag.Route = await _context.Routes
+            ViewBag.Route = await _context.RouteStations
                 .AsNoTracking()
                 .Where(r => r.RouteId == train.RouteId)
                 .Include(r => r.Station)
@@ -100,7 +100,7 @@ namespace DB_s2_1_1.Controllers
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name");
-            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View();
         }
 
@@ -119,7 +119,7 @@ namespace DB_s2_1_1.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View(train);
         }
 
@@ -138,7 +138,7 @@ namespace DB_s2_1_1.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View(train);
         }
 
@@ -176,7 +176,7 @@ namespace DB_s2_1_1.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.Routes.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
             return View(train);
         }
 
