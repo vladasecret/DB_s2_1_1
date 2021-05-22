@@ -60,7 +60,15 @@ namespace DB_s2_1_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,FirstStationId,SecondStationId,Distance")] StationRoad stationRoad)
         {
-            if (ModelState.IsValid)
+            if (stationRoad.FirstStationId == stationRoad.SecondStationId)
+            {
+                ModelState.AddModelError("", "First station and second station cannot be the equal");
+            }
+            else if(StationRoadExists(stationRoad.FirstStationId, stationRoad.SecondStationId)) {
+                ModelState.AddModelError("", $"Road between stations {stationRoad.FirstStationId} and {stationRoad.SecondStationId} " +
+                    $"already exists.");
+            }
+            else if (ModelState.IsValid)
             {
                 _context.Add(stationRoad);
                 await _context.SaveChangesAsync();
@@ -100,7 +108,16 @@ namespace DB_s2_1_1.Controllers
             {
                 return NotFound();
             }
-
+            if (stationRoad.FirstStationId == stationRoad.SecondStationId)
+            {
+                ModelState.AddModelError("", "First station and second station cannot be the equal");
+            }
+            else if (StationRoadExists(stationRoad.FirstStationId, stationRoad.SecondStationId))
+            {
+                ModelState.AddModelError("", $"Road between stations {stationRoad.FirstStationId} and {stationRoad.SecondStationId} " +
+                    $"already exists.");
+            }
+            else
             if (ModelState.IsValid)
             {
                 try
@@ -160,6 +177,11 @@ namespace DB_s2_1_1.Controllers
         private bool StationRoadExists(int id)
         {
             return _context.StationRoads.Any(e => e.Id == id);
+        }
+        private bool StationRoadExists(int firstId, int secondId) 
+        {
+            return _context.StationRoads.Any(e=> (e.FirstStationId == firstId && e.SecondStationId == secondId) 
+            || (e.FirstStationId == secondId && e.SecondStationId == firstId));
         }
     }
 }

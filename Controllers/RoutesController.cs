@@ -21,12 +21,24 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Routes
-        public async Task<IActionResult> Index(int page = 1)
+        public async Task<IActionResult> Index(int searchRoute, string searchCity, int page = 1)
         {
+            ViewData["RouteIdFilter"] = searchRoute == 0 ? null : searchRoute;
+            ViewData["CityFilter"] = searchCity;
+            var predicate = PredicateBuilder.New<Route>(true);
+            if (searchRoute > 0)
+            {
+                predicate.And(item => item.Id == searchRoute);
+            }
+            if (!string.IsNullOrEmpty(searchCity))
+            {
+                predicate.And(item => item.Stations.Where(sr => sr.Station.City.ToLower().Contains(searchCity.ToLower())).Any());
+            }
             return View(await _context.Routes
                 .AsNoTracking()
-                .Include(e => e.Stations)
-                .ThenInclude(st => st.Station)
+                .Include(r => r.Stations)
+                .ThenInclude(sr => sr.Station)
+                .Where(predicate)
                 .GetPaged(page));
         }
 
@@ -42,6 +54,8 @@ namespace DB_s2_1_1.Controllers
                 .AsNoTracking()
                 .Include(r => r.Stations)
                 .ThenInclude(st => st.Station)
+                .Include(r => r.Trains)
+                .ThenInclude(t => t.Category)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (route == null)
             {
@@ -246,6 +260,27 @@ namespace DB_s2_1_1.Controllers
             return RedirectToAction(nameof(Details), new { id = routeId });
         }
 
+
+        public async Task<IActionResult> DeleteTrain(int? routeId, int? trainId)
+        {
+            if (routeId == null)
+            {
+                return NotFound();
+            }
+
+            var route = await _context.Routes
+                .Include(r => r.Trains)
+                .FirstOrDefaultAsync(m => m.Id == routeId);
+            if (route == null)
+            {
+                return NotFound();
+            }
+            Train train = route.Trains.Where(t => t.Id == trainId).FirstOrDefault();
+            route.Trains.Remove(train);
+            await _context.SaveChangesAsync();
+
+            return RedirectToAction(nameof(Details), new { id = routeId });
+        }
 
         // GET: Routes/Delete/5
         public async Task<IActionResult> Delete(int? id)

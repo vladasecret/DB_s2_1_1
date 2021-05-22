@@ -37,6 +37,9 @@ namespace DB_s2_1_1.EntityModels
             modelBuilder.Entity<Category>()
                 .HasIndex(e => e.Name)
                 .IsUnique();
+            modelBuilder.Entity<Waiting>()
+                .HasIndex(e => e.TimetableId)
+                .IsUnique();
             modelBuilder.Entity<StationRoad>()
                 .HasIndex(e => new { e.FirstStationId, e.SecondStationId })
                 .IsUnique();

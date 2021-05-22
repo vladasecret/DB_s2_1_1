@@ -25,12 +25,12 @@ namespace DB_s2_1_1.Controllers
         // GET: Trains
         public async Task<IActionResult> Index(int searchRoute, int searchCategory, int searchSeats, int page = 1)
         {
-            
+
             ViewData["CategoryFilter"] = searchCategory;
             ViewData["RouteIdFilter"] = searchRoute > 0 ? searchRoute : null;
             ViewData["SeatsFilter"] = searchSeats > 0 ? searchSeats : null;
 
-            ViewData["RouteId"] = await _context.RouteStations.Select(e => e.RouteId).Distinct().ToListAsync();
+            ViewData["RouteId"] = await _context.Routes.AsNoTracking().Select(r => new { r.Id }).ToListAsync();
             ViewData["Categories"] = new SelectList(_context.Categories.AsNoTracking(), "Id", "Name", searchCategory);
 
             var predicate = PredicateBuilder.New<Train>(true);
@@ -68,14 +68,18 @@ namespace DB_s2_1_1.Controllers
 
             var train = await _context.Trains
                 .AsNoTracking()
-                .Include(t=> t.Employees)
-                .ThenInclude(empl=>empl.Station)
+                .Include(t => t.Employees)
+                .ThenInclude(empl => empl.Station)
+                .Include(t=> t.Route)
+                .ThenInclude(r=> r.Stations)
+                .ThenInclude(sr => sr.Station)
                 .Select(e => new TrainsViewModel
                 {
                     Id = e.Id,
                     Category = e.Category.Name,
                     SeatsQty = e.SeatsQty,
                     Station = e.Station.Name,
+                    Route = e.Route,
                     RouteId = e.RouteId,
                     Employees = e.Employees
                 })
@@ -86,12 +90,6 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            ViewBag.Route = await _context.RouteStations
-                .AsNoTracking()
-                .Where(r => r.RouteId == train.RouteId)
-                .Include(r => r.Station)
-                .OrderBy(e=> e.StationOrder)
-                .ToListAsync();
             return View(train);
         }
 
@@ -100,7 +98,7 @@ namespace DB_s2_1_1.Controllers
         {
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name");
-            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id");
             return View();
         }
 
@@ -138,7 +136,7 @@ namespace DB_s2_1_1.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id", train.RouteId);
             return View(train);
         }
 
@@ -176,7 +174,7 @@ namespace DB_s2_1_1.Controllers
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
             ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
+            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id", train.RouteId);
             return View(train);
         }
 
@@ -189,17 +187,17 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var train = await _context.Trains.Include(e=> e.Employees)
-                .ThenInclude(empl=>empl.Station)
-                .FirstOrDefaultAsync(e => e.Id == id);            
-                
+            var train = await _context.Trains.Include(e => e.Employees)
+                .ThenInclude(empl => empl.Station)
+                .FirstOrDefaultAsync(e => e.Id == id);
+
             if (train == null)
             {
                 return NotFound();
             }
             ViewBag.Empls = await _context.Employees.AsNoTracking()
                 .Include(e => e.Station)
-                .Include(e=> e.Trains)
+                .Include(e => e.Trains)
                 .GetPaged(page);
 
             return View(train);
@@ -227,7 +225,7 @@ namespace DB_s2_1_1.Controllers
             _context.Entry(newTrain).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
-            return RedirectToAction(nameof(EditBrigade), new {id = id, page = curPage});
+            return RedirectToAction(nameof(EditBrigade), new { id = id, page = curPage });
         }
 
 

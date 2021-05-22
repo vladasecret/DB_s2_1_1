@@ -4,14 +4,16 @@ using DB_s2_1_1.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DB_s2_1_1.Migrations
 {
     [DbContext(typeof(TrainsContext))]
-    partial class TrainsContextModelSnapshot : ModelSnapshot
+    [Migration("20210522133924_addStationInTimetable")]
+    partial class addStationInTimetable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder

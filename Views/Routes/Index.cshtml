@@ -10,6 +10,25 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
+
+<form asp-action="Index" method="get">
+    <input type="hidden" name="Page" value="@Model.CurrentPage" />
+    <div class="form-actions no-color">
+        <p>
+            Find by route id:
+            <input name="SearchRoute" type="number" min="1" value="@ViewData["RouteIdFilter"]" />
+        </p>
+    </div>
+    <div class="form-actions no-color">
+        <p>
+            Find by city:
+            <input name="SearchCity" type="text" value="@ViewData["CityFilter"]" />
+        </p>
+        <button type="submit" value="Search" class="btn btn-link">Search</button> |
+        <a asp-action="Index">Back to Full List</a>
+    </div>
+</form>
+
 <table class="table">
     <thead>
         <tr>

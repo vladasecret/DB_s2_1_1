@@ -4,14 +4,16 @@ using DB_s2_1_1.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DB_s2_1_1.Migrations
 {
     [DbContext(typeof(TrainsContext))]
-    partial class TrainsContextModelSnapshot : ModelSnapshot
+    [Migration("20210522082959_addRouteInTrain")]
+    partial class addRouteInTrain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -254,16 +256,21 @@ namespace DB_s2_1_1.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.Property<DateTime>("ArrivalTime")
+                        .HasColumnType("datetime2");
+
                     b.Property<int>("DelayMinutes")
                         .HasColumnType("int");
 
-                    b.Property<int>("TimetableId")
+                    b.Property<bool>("TrainDirection")
+                        .HasColumnType("bit");
+
+                    b.Property<int>("TrainId")
                         .HasColumnType("int");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("TimetableId")
-                        .IsUnique();
+                    b.HasIndex("TrainId");
 
                     b.ToTable("Waitings");
                 });
@@ -349,7 +356,7 @@ namespace DB_s2_1_1.Migrations
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
                 {
-                    b.HasOne("DB_s2_1_1.EntityModels.Station", "Station")
+                    b.HasOne("DB_s2_1_1.EntityModels.Station", null)
                         .WithMany("Timetables")
                         .HasForeignKey("StationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -361,8 +368,6 @@ namespace DB_s2_1_1.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Station");
-
                     b.Navigation("Train");
                 });
 
@@ -373,7 +378,7 @@ namespace DB_s2_1_1.Migrations
                         .HasForeignKey("CategoryId");
 
                     b.HasOne("DB_s2_1_1.EntityModels.Route", "Route")
-                        .WithMany("Trains")
+                        .WithMany()
                         .HasForeignKey("RouteId");
 
                     b.HasOne("DB_s2_1_1.EntityModels.Station", "Station")
@@ -389,13 +394,11 @@ namespace DB_s2_1_1.Migrations
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Waiting", b =>
                 {
-                    b.HasOne("DB_s2_1_1.EntityModels.Timetable", "Timetable")
-                        .WithOne("Waiting")
-                        .HasForeignKey("DB_s2_1_1.EntityModels.Waiting", "TimetableId")
+                    b.HasOne("DB_s2_1_1.EntityModels.Train", null)
+                        .WithMany("Waitings")
+                        .HasForeignKey("TrainId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Timetable");
                 });
 
             modelBuilder.Entity("EmployeeTrain", b =>
@@ -436,8 +439,6 @@ namespace DB_s2_1_1.Migrations
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Route", b =>
                 {
                     b.Navigation("Stations");
-
-                    b.Navigation("Trains");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Station", b =>
@@ -451,9 +452,9 @@ namespace DB_s2_1_1.Migrations
                     b.Navigation("Trains");
                 });
 
-            modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.Train", b =>
                 {
-                    b.Navigation("Waiting");
+                    b.Navigation("Waitings");
                 });
 #pragma warning restore 612, 618
         }

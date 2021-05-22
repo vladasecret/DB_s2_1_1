@@ -9,9 +9,6 @@
 
 <div>
     <h4>Route @Model.Id</h4>
-    <hr />
-    <dl class="row">
-    </dl>
 </div>
 <table class="table">
     <thead>
@@ -61,6 +58,45 @@
 <div>
     <a asp-action="AddStation" asp-route-id="@Model.Id">Add station in route</a>
 </div>
+<hr />
+<table class="table">
+    <h4>Trains</h4>
+    <thead>
+        <tr>
+            <th>
+                Train id
+            </th>
+            <th>
+                Category
+            </th>
+            <th>
+                Head station id
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (Train item in Model.Trains)
+            {
+                <tr>
+                    <td>
+                        @item.Id
+                    </td>
+                    <td>
+                        @item.Category.Name
+                    </td>
+                    <td>
+                        @item.StationId
+                    </td>
+                    <th>
+                        <div>
+                            <a asp-action="DeleteTrain" asp-route-routeId="@Model.Id" asp-route-trainId="@item.Id"> Delete</a>
+                        </div>
+                    </th>
+                </tr>
+            }
+    </tbody>
+</table>
 <hr />
 <div>
     <a asp-action="Index">Back to List</a>

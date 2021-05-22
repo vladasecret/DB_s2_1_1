@@ -4,14 +4,16 @@ using DB_s2_1_1.EntityModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace DB_s2_1_1.Migrations
 {
     [DbContext(typeof(TrainsContext))]
-    partial class TrainsContextModelSnapshot : ModelSnapshot
+    [Migration("20210522113642_addWaitingsTTIDUnoque")]
+    partial class addWaitingsTTIDUnoque
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -349,7 +351,7 @@ namespace DB_s2_1_1.Migrations
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
                 {
-                    b.HasOne("DB_s2_1_1.EntityModels.Station", "Station")
+                    b.HasOne("DB_s2_1_1.EntityModels.Station", null)
                         .WithMany("Timetables")
                         .HasForeignKey("StationId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -360,8 +362,6 @@ namespace DB_s2_1_1.Migrations
                         .HasForeignKey("TrainId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Station");
 
                     b.Navigation("Train");
                 });

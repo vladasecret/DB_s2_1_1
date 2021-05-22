@@ -10,14 +10,10 @@ namespace DB_s2_1_1.EntityModels
     {
         public int Id { get; set; }
 
-        [Display(Name = "Train id")]
-        public int TrainId { get; set; }
+        [Display(Name = "Timetable id")]
+        public int TimetableId { get; set; }
 
-        [Display(Name = "Arrival time")]
-        public DateTime ArrivalTime { get; set;}
-
-        [Display(Name = "Train direction")]
-        public bool TrainDirection { get; set;}
+        public Timetable Timetable { get; set; }
 
         [Display(Name = "Delay in minutes")]
         public int DelayMinutes { get; set;}

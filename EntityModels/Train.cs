@@ -12,7 +12,7 @@ namespace DB_s2_1_1.EntityModels
         public int Id { get; set; }
 
         [Display(Name = "Route id")]
-        public int RouteId { get; set; }
+        public int? RouteId { get; set; }
 
         public int? StationId { get; set; }
 
@@ -25,11 +25,11 @@ namespace DB_s2_1_1.EntityModels
         public Category Category { get; set; }
 
         public Station Station { get; set; }
-        //public Route Route { get; set; }
+        
+        public Route Route { get; set; }
 
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
 
-        public ICollection<Waiting> Waitings { get; set; }
         
 
 

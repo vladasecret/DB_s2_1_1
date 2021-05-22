@@ -466,7 +466,6 @@ C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\RouteStations
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\RouteStations\Details.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\RouteStations\Edit.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\RouteStations\Index.cshtml.g.cs
-C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\DB_s2_1_1.csprojAssemblyReference.cache
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Create.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Delete.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\Details.cshtml.g.cs
@@ -479,3 +478,9 @@ C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\StationRoads\
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\StationRoads\Index.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\AddStation.cshtml.g.cs
 C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Routes\EditStation.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\DB_s2_1_1.csprojAssemblyReference.cache
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Timetables\Create.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Timetables\Delete.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Timetables\Details.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Timetables\Edit.cshtml.g.cs
+C:\Users\vlada\source\repos\DB_s2_1_1\obj\Debug\net5.0\Razor\Views\Timetables\Index.cshtml.g.cs

@@ -73,38 +73,42 @@
         <a asp-action="EditBrigade" asp-route-id="@Model.Id">Edit brigade</a>
     </div>
 </div>
-<hr />
-<div>
-    <h4>Route</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>
-                    Station id
-                </th>
-                <th>
-                    Station name
-                </th>
-                <th>
-                    Station order
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (RouteStation item in ViewBag.Route)
-            {
+@if (Model.Route != null)
+{
+    <hr />
+    <div>
+        <h4>Route</h4>
+        <table class="table">
+            <thead>
                 <tr>
-                    <td>
-                        @item.StationId
-                    </td>
-                    <td>
-                        @item.Station.Name
-                    </td>
-                    <td>
-                        @item.StationOrder
-                    </td>
+                    <th>
+                        Station id
+                    </th>
+                    <th>
+                        Station name
+                    </th>
+                    <th>
+                        Station order
+                    </th>
                 </tr>
-            }
-        </tbody>
-    </table>
-</div>
+            </thead>
+            <tbody>
+                @foreach (RouteStation item in Model.Route?.Stations.OrderBy(sr => sr.StationOrder))
+                {
+                    <tr>
+                        <td>
+                            @item.StationId
+                        </td>
+                        <td>
+                            @item.Station.Name
+                        </td>
+                        <td>
+                            @item.StationOrder
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+    <a asp-controller="Routes" asp-action="Details" asp-route-id="@Model.RouteId">Route details</a>
+}
