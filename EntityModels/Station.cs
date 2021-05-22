@@ -21,7 +21,5 @@ namespace DB_s2_1_1.EntityModels
         public ICollection<Employee> Employees { get; set; }
         public ICollection<RouteStation> Routes { get; set; }
         public ICollection<Timetable> Timetables { get; set; }
-
-
     }
 }

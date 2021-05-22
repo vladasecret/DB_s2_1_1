@@ -1,4 +1,4 @@
-﻿@model DB_s2_1_1.EntityModels.RouteStation
+﻿@model DB_s2_1_1.EntityModels.Route
 
 @{
     ViewData["Title"] = "Delete";
@@ -11,24 +11,6 @@
     <h4>Route</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RouteId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RouteId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StationOrder)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StationOrder)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Station)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Station.Name)
-        </dd class>
     </dl>
     
     <form asp-action="Delete">

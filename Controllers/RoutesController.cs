@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
 using DB_s2_1_1.PagedResult;
+using LinqKit;
 
 namespace DB_s2_1_1.Controllers
 {
@@ -20,15 +21,13 @@ namespace DB_s2_1_1.Controllers
         }
 
         // GET: Routes
-        public async Task<IActionResult> Index(int routeIdFilter, int page = 1)
+        public async Task<IActionResult> Index(int page = 1)
         {
-            ViewData["RouteIdFilter"] = routeIdFilter == 0 ? null : routeIdFilter;
-            var trainsContext = routeIdFilter == 0 ?
-                _context.RouteStations.Include(r => r.Station)
-                : _context.RouteStations
-                .Where(e => e.RouteId == routeIdFilter)
-                .Include(r => r.Station);
-            return View(await trainsContext.GetPaged(page));
+            return View(await _context.Routes
+                .AsNoTracking()
+                .Include(e => e.Stations)
+                .ThenInclude(st => st.Station)
+                .GetPaged(page));
         }
 
         // GET: Routes/Details/5
@@ -39,13 +38,16 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var route = await _context.RouteStations
-                .Include(r => r.Station)
+            var route = await _context.Routes
+                .AsNoTracking()
+                .Include(r => r.Stations)
+                .ThenInclude(st => st.Station)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (route == null)
             {
                 return NotFound();
             }
+
 
             return View(route);
         }
@@ -53,7 +55,7 @@ namespace DB_s2_1_1.Controllers
         // GET: Routes/Create
         public IActionResult Create()
         {
-            ViewData["StationId"] = getStationsInfo();
+            ViewBag.StationId = GetStationsInfo(_context.Stations.AsNoTracking());
             return View();
         }
 
@@ -62,91 +64,188 @@ namespace DB_s2_1_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,StationOrder")] RouteStation route)
+        public async Task<IActionResult> Create([Bind("Id")] Route route, int stationId)
         {
-            if (StationOrderInRoute(route.RouteId, route.StationOrder))
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("", $"Station with order number {route.StationOrder} already exists in rout with id {route.RouteId}.");
+                RouteStation routeStation = new();
+                routeStation.Route = route;
+                routeStation.Station = await _context.Stations.FirstOrDefaultAsync(e => e.Id == stationId);
+                routeStation.StationOrder = 1;
+                route.Stations.Add(routeStation);
+                _context.Add(route);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
             }
-            else if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Add(route);
-                    await _context.SaveChangesAsync();
-                    return RedirectToAction(nameof(Index));
-                }
-                catch (DbUpdateException)
-                {
-                    ModelState.AddModelError("", $"The row with values (Route id: {route.RouteId}, Station id: {route.StationId}) already exists.");
-                }
-            }
-            ViewData["StationId"] = getStationsInfo();
             return View(route);
         }
 
-        // GET: Routes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> EditStation(int? rsId)
+        {
+            if (rsId == null)
+            {
+                return NotFound();
+            }
+            RouteStation routeStation = await _context.RouteStations.AsNoTracking()
+                .Where(r => r.Id == rsId)
+                .Include(r => r.Station)
+                .FirstOrDefaultAsync();
+            if (routeStation == null)
+            {
+                return NotFound();
+            }
+
+            var route = await _context.Routes.Include(r => r.Stations).FirstOrDefaultAsync(r => r.Id == routeStation.RouteId);
+            if (route == null)
+            {
+                return NotFound();
+            }
+            Dictionary<int, int> stationsOrder = route.Stations.ToDictionary(key => key.StationOrder, val => val.StationId);
+
+            int prevStation = stationsOrder.GetValueOrDefault(routeStation.StationOrder - 1);
+            int nextStation = stationsOrder.GetValueOrDefault(routeStation.StationOrder + 1);
+            stationsOrder.Remove(routeStation.StationOrder);
+            ViewBag.StationId = GetStationsInfo(FindCommonStations(prevStation, nextStation, stationsOrder.Values.ToList())
+                .AsQueryable(), routeStation.Station);
+
+
+            return View(routeStation);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EditStation(int id, RouteStation rs)
+        {
+            if (id != rs.Id)
+            {
+                return NotFound();
+            }
+
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    _context.Update(rs);
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!RouteExists(rs.Id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                catch (DbUpdateException exc)
+                {
+                    ModelState.AddModelError("", exc.InnerException == null ? exc.Message : exc.InnerException.Message);
+                }
+                return RedirectToAction(nameof(Index));
+            }
+            return View(rs);
+        }
+        public async Task<IActionResult> AddStation(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var route = await _context.RouteStations.FindAsync(id);
+            var route = await _context.Routes
+                .Include(e => e.Stations)
+                .ThenInclude(stations => stations.Station)
+                .FirstOrDefaultAsync(e => e.Id == id);
             if (route == null)
             {
                 return NotFound();
             }
-            ViewData["StationId"] = getStationsInfo();
+            int stationOrder = route.Stations.Count + 1;
+            Dictionary<int, int> stationsOrder = route.Stations.ToDictionary(key => key.StationOrder, val => val.StationId);
+            if (stationsOrder.Keys.Contains(stationOrder))
+            {
+                stationOrder = Enumerable.Range(1, stationsOrder.Keys.Max()).Except(stationsOrder.Keys).ToList().First();
+            }
+            int prevStation = stationsOrder.GetValueOrDefault(stationOrder - 1);
+            int nextStation = stationsOrder.GetValueOrDefault(stationOrder + 1);
+
+            ViewBag.StationId = GetStationsInfo(FindCommonStations(prevStation, nextStation, stationsOrder.Values.ToList()).AsQueryable());
+
+
+            ViewBag.StationOrder = stationOrder;
+
             return View(route);
         }
 
-        // POST: Routes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,StationId,StationOrder")] RouteStation route)
+        public async Task<IActionResult> AddStation(int id, int stationId, int stationOrder)
         {
-            if (id != route.Id)
+            Route route = await _context.Routes.Include(r => r.Stations).FirstOrDefaultAsync(r => r.Id == id);
+            if (route == null)
             {
                 return NotFound();
             }
-            if (StationOrderInRoute(route.RouteId, route.StationOrder))
-            {
-                ModelState.AddModelError("", $"Station with order number {route.StationOrder} already exists in rout with id {route.RouteId}.");
-            }
-            else if (ModelState.IsValid)
+            if (ModelState.IsValid)
             {
                 try
                 {
-                    try
+                    Station station = await _context.Stations.FirstOrDefaultAsync(s => s.Id == stationId);
+                    RouteStation rs = new()
                     {
-                        _context.Update(route);
-                        await _context.SaveChangesAsync();
-                    }
-                    catch (DbUpdateConcurrencyException)
-                    {
-                        if (!RouteExists(route.Id))
-                        {
-                            return NotFound();
-                        }
-                        else
-                        {
-                            throw;
-                        }
-                    }
-                    return RedirectToAction(nameof(Index));
+                        Station = station,
+                        StationOrder = stationOrder
+                    };
+                    route.Stations.Add(rs);
+                    _context.Update(route);
+                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Details), new { id });
                 }
-                catch (DbUpdateException)
+                catch (DbUpdateConcurrencyException)
                 {
-                    ModelState.AddModelError("", $"The row with values (Route id: {route.RouteId}, Station id: {route.StationId}) already exists.");
+                    if (!RouteExists(id))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
                 }
+                catch (DbUpdateException exc)
+                {
+                    ModelState.AddModelError("", exc.InnerException == null ? exc.Message : exc.InnerException.Message);
+                }
+
             }
-            ViewData["StationId"] = getStationsInfo();
+            Dictionary<int, int> stationsOrder = route.Stations.ToDictionary(key => key.StationOrder, val => val.StationId);
+            int prevStation = stationsOrder.GetValueOrDefault(stationOrder - 1);
+            int nextStation = stationsOrder.GetValueOrDefault(stationOrder + 1);
+            ViewBag.StationId = GetStationsInfo(FindCommonStations(prevStation, nextStation, stationsOrder.Values.ToList())
+                .AsQueryable());
+
+            ViewBag.StationOrder = stationOrder;
             return View(route);
         }
+
+        public async Task<IActionResult> DeleteStation(int routeId, int stationId)
+        {
+            Route route = await _context.Routes.Include(r => r.Stations)
+                .ThenInclude(rs => rs.Station)
+                .FirstOrDefaultAsync(r => r.Id == routeId);
+            if (route == null)
+            {
+                return NotFound();
+            }
+            RouteStation rs = _context.RouteStations.FirstOrDefault(rs => rs.RouteId == routeId && rs.StationId == stationId);
+            route.Stations.Remove(rs);
+
+            await _context.SaveChangesAsync();
+            return RedirectToAction(nameof(Details), new { id = routeId });
+        }
+
 
         // GET: Routes/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -156,8 +255,7 @@ namespace DB_s2_1_1.Controllers
                 return NotFound();
             }
 
-            var route = await _context.RouteStations
-                .Include(r => r.Station)
+            var route = await _context.Routes
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (route == null)
             {
@@ -172,24 +270,60 @@ namespace DB_s2_1_1.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var route = await _context.RouteStations.FindAsync(id);
-            _context.RouteStations.Remove(route);
+            var route = await _context.Routes.FindAsync(id);
+            _context.Routes.Remove(route);
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
-        }
-        private SelectList getStationsInfo()
-        {
-            return new SelectList(_context.Stations.Select(e => new { Id = e.Id, Name = $"{e.Name}" + ((e.City.Length > 0) ? $" ({e.City})" : "") }), "Id", "Name");
         }
 
         private bool RouteExists(int id)
         {
-            return _context.RouteStations.Any(e => e.Id == id);
+            return _context.Routes.Any(e => e.Id == id);
         }
 
-        private bool StationOrderInRoute(int routeId, int order)
+        private List<Station> FindCommonStations(int prevStationId, int nextStationId, List<int> exceptValues)
         {
-            return _context.RouteStations.Any(e => e.RouteId == routeId && e.StationOrder == order);
+            if (prevStationId + nextStationId == 0)
+                return _context.Stations.AsNoTracking().ToList();
+
+            if (prevStationId == 0)
+            {
+                prevStationId = nextStationId;
+                nextStationId = 0;
+            }
+
+            var predicate1 = PredicateBuilder.New<StationRoad>(true);
+            predicate1.And(road => road.FirstStationId == prevStationId || road.SecondStationId == prevStationId);
+
+            List<int> result =
+            _context.StationRoads.AsNoTracking()
+                .Where(predicate1)
+                .Select(e => e.FirstStationId == prevStationId ? e.SecondStationId : e.FirstStationId)
+                .ToList();
+
+            if (nextStationId != 0)
+            {
+                var predicate2 = PredicateBuilder.New<StationRoad>(false);
+                predicate2.Or(road => road.FirstStationId == nextStationId || road.SecondStationId == nextStationId);
+
+                result = _context.StationRoads.AsNoTracking()
+                .Where(predicate2)
+                .Select(e => e.FirstStationId == nextStationId ? e.SecondStationId : e.FirstStationId)
+                .ToList()
+                .Union(result)
+                .ToList();
+            }
+            exceptValues.ForEach(e => result.Remove(e));
+
+            return _context.Stations.AsNoTracking().Where(e => result.Contains(e.Id)).ToList();
+
+        }
+
+        private SelectList GetStationsInfo(IQueryable<Station> stations, Station selectedStation = null)
+        {
+
+            return new SelectList(stations
+                .Select(e => new { e.Id, Name = e.Name + (string.IsNullOrEmpty(e.City) ? "" : $" ({e.City})") }), "Id", "Name", selectedStation);
         }
     }
 }

@@ -22,6 +22,8 @@ namespace DB_s2_1_1.EntityModels
         public int StationOrder { get; set; }
 
         public Station Station { get; set; }
+
+        public Route Route { get; set; }
        
 
     }

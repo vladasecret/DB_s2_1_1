@@ -1,4 +1,5 @@
-﻿@model DB_s2_1_1.EntityModels.RouteStation
+﻿@model DB_s2_1_1.EntityModels.Route
+@using DB_s2_1_1.EntityModels
 
 @{
     ViewData["Title"] = "Details";
@@ -7,30 +8,60 @@
 <h1>Details</h1>
 
 <div>
-    <h4>Route</h4>
+    <h4>Route @Model.Id</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RouteId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RouteId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StationOrder)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.StationOrder)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Station)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Station.Name)
-        </dd>
     </dl>
 </div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Station id
+            </th>
+            <th>
+                Station name
+            </th>
+            <th>
+                Station city
+            </th>
+            <th>
+                Station order
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (RouteStation item in Model.Stations.OrderBy(e => e.StationOrder))
+        {
+            <tr>
+                <td>
+                    @item.StationId
+                </td>
+                <td>
+                    @item.Station.Name
+                </td>
+                <td>
+                    @item.Station.City
+                </td>
+                <td>
+                    @item.StationOrder
+                </td>
+                <td>
+                    <a asp-action="EditStation" asp-route-rsId="@item.Id">Edit</a>
+                    @if (item.StationOrder == Model.Stations.Count)
+                    {
+                        <a asp-action="DeleteStation" asp-route-routeId="@Model.Id" asp-route-stationId="@item.StationId"> | Delete</a>
+                    }
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
+    <a asp-action="AddStation" asp-route-id="@Model.Id">Add station in route</a>
+</div>
+<hr />
+<div>
     <a asp-action="Index">Back to List</a>
 </div>

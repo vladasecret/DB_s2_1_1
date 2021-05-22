@@ -1,4 +1,5 @@
-﻿@model DB_s2_1_1.PagedResult.PagedResult<DB_s2_1_1.EntityModels.RouteStation>
+﻿@model DB_s2_1_1.PagedResult.PagedResult<Route>
+@using DB_s2_1_1.EntityModels
 
 @{
     ViewData["Title"] = "Routes";
@@ -9,30 +10,20 @@
 <p>
     <a asp-action="Create">Create New</a>
 </p>
-
-
-
-<form asp-action="Index" method="get">
-    <div class="form-actions no-color">
-        <p>
-            Find by route id: <input type="number" name="RouteIdFilter" min ="1" value="@ViewData["RouteIdFilter"]" />
-        </p>
-        <button type="submit" value="Search" class="btn btn-link">Search</button> |
-        <a asp-action="Index">Back to Full List</a>
-    </div>
-</form>
-
 <table class="table">
     <thead>
         <tr>
             <th>
-                Route Id
+                ID
             </th>
             <th>
-                Station order
+                Num of stations in route
             </th>
             <th>
-                Station
+                First station
+            </th>
+            <th>
+                Last station
             </th>
             <th></th>
         </tr>
@@ -42,16 +33,23 @@
         {
             <tr>
                 <td>
-                    @Html.DisplayFor(modelItem => item.RouteId)
+                    @item.Id
                 </td>
                 <td>
-                    @Html.DisplayFor(modelItem => item.StationOrder)
+                    @item.Stations.Count
                 </td>
+                @if (item.Stations.Count > 0)
+                {
+                    <td>@item.Stations.ElementAtOrDefault(0).Station.Name</td>
+                    <td>@item.Stations.ElementAtOrDefault(item.Stations.Count - 1)?.Station.Name</td>
+                }
+                else
+                {
+                    <th></th>
+                    <th></th>
+                }
+
                 <td>
-                    @Html.DisplayFor(modelItem => item.Station.Name)
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
                     <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
                     <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
                 </td>
@@ -62,7 +60,6 @@
 
 <form asp-action="Index" method="get">
     <div class="form-actions no-color">
-        <input type="number" name="RouteIdFilter" value="@ViewData["RouteIdFilter"]" hidden/>
         @for (int i = Math.Max(Model.CurrentPage - 4, 1); i < Model.CurrentPage; ++i)
         {
             <button class="btn btn-primary" type="submit" name="Page" value="@i">@i</button>

@@ -1,0 +1,52 @@
+﻿@model DB_s2_1_1.EntityModels.Route
+
+@{
+    ViewData["Title"] = "Add station";
+}
+
+<h1>Add station</h1>
+
+
+
+<div>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            Route ID
+        </dt>
+        <dd class="col-sm-10">
+            @Model.Id
+        </dd>
+        <dt class="col-sm-2">
+            Station order
+        </dt>
+        <dd class="col-sm-10">
+            @ViewBag.StationOrder
+        </dd>
+    </dl>
+</div>
+
+<div class="row">
+    <div class="col-md-4">
+        <form asp-action="AddStation">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" name="stationOrder" value="@ViewBag.StationOrder"/>
+            <div class="form-group">
+                <label name="StationId" class="control-label">Station</label>
+                <select name="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Add" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

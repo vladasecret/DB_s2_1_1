@@ -83,6 +83,18 @@ namespace DB_s2_1_1.Migrations
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
+                    b.HasKey("Id");
+
+                    b.ToTable("Routes");
+                });
+
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.RouteStation", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
                     b.Property<int>("RouteId")
                         .HasColumnType("int");
 
@@ -99,7 +111,7 @@ namespace DB_s2_1_1.Migrations
                     b.HasIndex("RouteId", "StationId")
                         .IsUnique();
 
-                    b.ToTable("Routes");
+                    b.ToTable("RouteStations");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Station", b =>
@@ -119,6 +131,32 @@ namespace DB_s2_1_1.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Stations");
+                });
+
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.StationRoad", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<double>("Distance")
+                        .HasColumnType("float");
+
+                    b.Property<int>("FirstStationId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SecondStationId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SecondStationId");
+
+                    b.HasIndex("FirstStationId", "SecondStationId")
+                        .IsUnique();
+
+                    b.ToTable("StationRoads");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
@@ -274,15 +312,42 @@ namespace DB_s2_1_1.Migrations
                     b.Navigation("Station");
                 });
 
-            modelBuilder.Entity("DB_s2_1_1.EntityModels.Route", b =>
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.RouteStation", b =>
                 {
+                    b.HasOne("DB_s2_1_1.EntityModels.Route", "Route")
+                        .WithMany("Stations")
+                        .HasForeignKey("RouteId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("DB_s2_1_1.EntityModels.Station", "Station")
                         .WithMany("Routes")
                         .HasForeignKey("StationId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.Navigation("Route");
+
                     b.Navigation("Station");
+                });
+
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.StationRoad", b =>
+                {
+                    b.HasOne("DB_s2_1_1.EntityModels.Station", "FirstStation")
+                        .WithMany()
+                        .HasForeignKey("FirstStationId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+
+                    b.HasOne("DB_s2_1_1.EntityModels.Station", "SecondStation")
+                        .WithMany()
+                        .HasForeignKey("SecondStationId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("FirstStation");
+
+                    b.Navigation("SecondStation");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
@@ -359,6 +424,11 @@ namespace DB_s2_1_1.Migrations
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Category", b =>
                 {
                     b.Navigation("Trains");
+                });
+
+            modelBuilder.Entity("DB_s2_1_1.EntityModels.Route", b =>
+                {
+                    b.Navigation("Stations");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Station", b =>
