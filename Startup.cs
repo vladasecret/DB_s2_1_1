@@ -1,4 +1,5 @@
 using DB_s2_1_1.EntityModels;
+using DB_s2_1_1.Services;
 using FloatingDecimalBinderModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -48,6 +49,8 @@ namespace DB_s2_1_1
                     options.UseLoggerFactory(dbContextLoggerFactory);
                 }
                 });
+
+            services.AddScoped<ICategoriesService, CategoriesService>();
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 

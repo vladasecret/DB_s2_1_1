@@ -26,7 +26,7 @@ namespace DB_s2_1_1.Controllers
 
             if (!string.IsNullOrEmpty(query)) {
                 ViewData["InsertedQuery"] = query;
-                using SqlConnection sqlConnection = new SqlConnection(configuration.GetConnectionString("ManualRawSqlConnection"));
+                using SqlConnection sqlConnection = new(configuration.GetConnectionString("ManualRawSqlConnection"));
                 sqlConnection.Open();
                 using SqlCommand cmd = new(query, sqlConnection);
                 try
