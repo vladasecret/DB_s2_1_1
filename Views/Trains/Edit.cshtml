@@ -1,4 +1,4 @@
-﻿@model DB_s2_1_1.EntityModels.Train
+﻿@model DB_s2_1_1.ViewModel.Trains.TrainEditing
 
 @{
     ViewData["Title"] = "Edit";
@@ -8,29 +8,33 @@
 
 <h4>Train</h4>
 <hr />
+<div>
+    @Html.ValidationSummary()
+</div>
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+        <form asp-action="Edit" method="post">
+            
+            <input type="hidden" asp-for="Train.Id" />
             <div class="form-group">
-                <label asp-for="RouteId" class="control-label">@Html.DisplayNameFor(model => model.RouteId)</label>
-                <select asp-for="RouteId" class="form-control" asp-items="ViewBag.RouteId"></select>
+                <label asp-for="Train.RouteId" class="control-label">@Html.DisplayNameFor(model => model.Train.RouteId)</label>
+                <select asp-for="Train.RouteId" class="form-control" asp-items="@Model.Routes"></select>
+                
             </div>
             <div class="form-group">
-                <label asp-for="StationId" class="control-label">@Html.DisplayNameFor(model => model.Station)</label>
-                <select asp-for="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
-                <span asp-validation-for="StationId" class="text-danger"></span>
+                <label asp-for="Train.StationId" class="control-label">@Html.DisplayNameFor(model => model.Train.Station)</label>
+                <select asp-for="Train.StationId" class="form-control" asp-items="@Model.Stations"></select>
+                
             </div>
             <div class="form-group">
-                <label asp-for="CategoryId" class="control-label">@Html.DisplayNameFor(model => model.Category)</label>
-                <select asp-for="CategoryId" class="form-control" asp-items="ViewBag.CategoryId"></select>
-                <span asp-validation-for="CategoryId" class="text-danger"></span>
+                <label asp-for="Train.CategoryId" class="control-label">@Html.DisplayNameFor(model => model.Train.Category)</label>
+                <select asp-for="Train.CategoryId" class="form-control" asp-items="@Model.Categories"></select>
+                
             </div>
             <div class="form-group">
-                <label asp-for="SeatsQty" class="control-label">@Html.DisplayNameFor(model => model.SeatsQty)</label>
-                <input asp-for="SeatsQty" type="number" step="1" min="20"  class="form-control" />
-                <span asp-validation-for="SeatsQty" class="text-danger"></span>
+                <label asp-for="Train.SeatsQty" class="control-label">@Html.DisplayNameFor(model => model.Train.SeatsQty)</label>
+                <input asp-for="Train.SeatsQty" type="number" step="1" min="20" class="form-control" />
+                
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />

@@ -34,7 +34,7 @@ using System.Data;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"320cd9823f20f69022eb1d1db6dae93caf4b9423", @"/Views/Trains/Delete.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"3a3790cb0502c37fffe326c6a6c363c21790dd38", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"12d9414e9e94c82eba011d7b5f247195467d8f12", @"/Views/_ViewImports.cshtml")]
     public class Views_Trains_Delete : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DB_s2_1_1.EntityModels.Train>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("type", "hidden", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

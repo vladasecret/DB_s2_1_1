@@ -9,7 +9,7 @@ namespace DB_s2_1_1.EntityModels
     {
         public int Id { get; set; }
         public string RoleName { get; set; }
-        public ICollection<User> Users { get; set; }
+        public ICollection<OldUser> Users { get; set; }
 
     }
 }

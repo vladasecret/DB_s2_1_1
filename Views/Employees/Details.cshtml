@@ -10,16 +10,16 @@
     <h4>Employee</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.FIO)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.FIO)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2">
             @Html.DisplayNameFor(model => model.Station)
         </dt>
-        <dd class = "col-sm-10">
+        <dd class="col-sm-10">
             @Html.DisplayFor(model => model.Station.Name)
         </dd>
     </dl>
@@ -28,3 +28,49 @@
     <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>
+<hr />
+<h5>Trains</h5>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Train id
+            </th>
+            <th>
+                Route id
+            </th>
+            <th>
+                Category id
+            </th>
+            <th>
+                Station id
+            </th>
+            <th>
+                SeatsQty
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Trains)
+        {
+            <tr>
+                <td>
+                    @item.Id
+                </td>
+                <td>
+                    @item.RouteId
+                </td>
+                <td>
+                    @item.CategoryId
+                </td>
+                <td>
+                    @item.StationId
+                </td>
+                <td>
+                    @item.SeatsQty
+                </td>
+            </tr>
+        }
+    </tbody>
+
+</table>

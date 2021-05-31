@@ -61,21 +61,6 @@ namespace DB_s2_1_1.Migrations
                     b.ToTable("Employees");
                 });
 
-            modelBuilder.Entity("DB_s2_1_1.EntityModels.Role", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("RoleName")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Roles");
-                });
-
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Route", b =>
                 {
                     b.Property<int>("Id")
@@ -226,27 +211,6 @@ namespace DB_s2_1_1.Migrations
                     b.ToTable("Trains");
                 });
 
-            modelBuilder.Entity("DB_s2_1_1.EntityModels.User", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<string>("Login")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SecretPhrase")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Users");
-                });
-
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Waiting", b =>
                 {
                     b.Property<int>("Id")
@@ -281,21 +245,6 @@ namespace DB_s2_1_1.Migrations
                     b.HasIndex("TrainsId");
 
                     b.ToTable("EmployeeTrain");
-                });
-
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.Property<int>("RolesId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UsersId")
-                        .HasColumnType("int");
-
-                    b.HasKey("RolesId", "UsersId");
-
-                    b.HasIndex("UsersId");
-
-                    b.ToTable("RoleUser");
                 });
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Employee", b =>
@@ -409,21 +358,6 @@ namespace DB_s2_1_1.Migrations
                     b.HasOne("DB_s2_1_1.EntityModels.Train", null)
                         .WithMany()
                         .HasForeignKey("TrainsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("RoleUser", b =>
-                {
-                    b.HasOne("DB_s2_1_1.EntityModels.Role", null)
-                        .WithMany()
-                        .HasForeignKey("RolesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DB_s2_1_1.EntityModels.User", null)
-                        .WithMany()
-                        .HasForeignKey("UsersId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });

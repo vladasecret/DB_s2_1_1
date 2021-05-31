@@ -1,4 +1,4 @@
-﻿@model DB_s2_1_1.EntityModels.RouteStation
+﻿@model DB_s2_1_1.ViewModel.Routes.RoutesStationViewModel
 
 @{
     ViewData["Title"] = "Edit station";
@@ -15,13 +15,13 @@
             Route ID
         </dt>
         <dd class="col-sm-10">
-            @Model.RouteId
+            @Model.RouteStation.RouteId
         </dd>
         <dt class="col-sm-2">
             Station order
         </dt>
         <dd class="col-sm-10">
-            @Model.StationOrder
+            @Model.RouteStation.StationOrder
         </dd>
     </dl>
 </div>
@@ -30,12 +30,12 @@
     <div class="col-md-4">
         <form asp-action="EditStation">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
-            <input type="hidden" asp-for="RouteId" />
-            <input type="hidden" asp-for="StationOrder" />
+            <input type="hidden" asp-for="RouteStation.Id" />
+            <input type="hidden" asp-for="RouteStation.RouteId" />
+            <input type="hidden" asp-for="RouteStation.StationOrder" />
             <div class="form-group">
                 <label name="StationId" class="control-label">Station</label>
-                <select asp-for="StationId" class="form-control" asp-items="ViewBag.StationId"></select>
+                <select asp-for="RouteStation.StationId" class="form-control" asp-items="@Model.StationsSelectList"></select>
             </div>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
@@ -45,9 +45,9 @@
 </div>
 
 <div>
-    <a asp-action="Details" asp-route-id="@Model.RouteId">Back</a>
+    <a asp-action="Details" asp-route-id="@Model.RouteStation.RouteId">Back</a>
 </div>
 
-@section Scripts {
+@section Scripts {s
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
 }

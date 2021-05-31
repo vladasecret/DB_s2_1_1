@@ -29,10 +29,5 @@ namespace DB_s2_1_1.EntityModels
         public Route Route { get; set; }
 
         public ICollection<Employee> Employees { get; set; } = new List<Employee>();
-
-        
-
-
-
     }
 }

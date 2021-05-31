@@ -1,44 +1,65 @@
-﻿@model DataTable
+﻿@model DB_s2_1_1.ViewModel.ManualQueryViewModel
 
 @{
     ViewData["Title"] = "Manual query";
 }
 
 <h1>Manual query</h1>
-@if (ViewData["ErrorMsg"] != null)
+@if (Model.ErrorMsg != null)
 {
     <div class="alert alert-danger" role="alert">
-        @ViewData["ErrorMsg"]
+        @Model.ErrorMsg
     </div>
 }
 
 <form asp-action="Index" method="get">
     <div class="form-group">
-        <textarea class="form-control" placeholder="Write your query there" name="Query">@ViewData["InsertedQuery"]</textarea>
+        <textarea class="form-control" placeholder="Write your query there" name="InsertedQuery">@Model.InsertedQuery</textarea>
     </div>
     <div class="form-group">
         <button class="btn btn-primary" type="submit">Execute</button>
     </div>
 
 </form>
-<table class="table">
-    <thead>
-        <tr>
-            @foreach (DataColumn item in Model.Columns)
-            {
-                <th>@item.ColumnName</th>
-            }
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (DataRow dr in Model.Rows)
-        {
+@if (Model.PagedQuery != null)
+{
+    <table class="table">
+        <thead>
             <tr>
-                @for (int i = 0; i < Model.Columns.Count; ++i)
+                @foreach (DataColumn item in Model.PagedQuery.Results.Columns)
                 {
-                    <td>@dr[i].ToString()</td>
+                    <th>@item.ColumnName</th>
                 }
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (DataRow dr in Model.PagedQuery.Results.Rows)
+            {
+                <tr>
+                    @for (int i = 0; i < Model.PagedQuery.Results.Columns.Count; ++i)
+                    {
+                        <td>@dr[i].ToString()</td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <form asp-action="Index" method="get">
+        <div class="form-actions no-color">
+            <input type="hidden" asp-for="InsertedQuery" />
+            <button class="btn btn-primary" type="submit" name="Page" value="@(Model.PagedQuery.CurrentPage - 1)"
+                    @(Model.PagedQuery.CurrentPage > 1 ? "" : "disabled")>
+                &larr;
+            </button>
+
+            <button class="btn btn-primary" type="submit" name="Page" value="@Model.PagedQuery.CurrentPage" disabled>@Model.PagedQuery.CurrentPage</button>
+
+            <button class="btn btn-primary" type="submit" name="Page" value="@(Model.PagedQuery.CurrentPage + 1)"
+                    @(Model.PagedQuery.PageSize > Model.PagedQuery.RowCount ? "disabled" : "")>
+                &rarr;
+            </button>
+
+        </div>
+    </form>
+}

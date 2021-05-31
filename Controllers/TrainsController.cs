@@ -9,82 +9,36 @@ using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
 using DB_s2_1_1.ViewModel;
 using DB_s2_1_1.PagedResult;
-
+using DB_s2_1_1.Services;
+using DB_s2_1_1.ViewModel.Trains;
 
 namespace DB_s2_1_1.Controllers
 {
     public class TrainsController : Controller
     {
-        private readonly TrainsContext _context;
+        private readonly ITrainsService trainsService;
 
-        public TrainsController(TrainsContext context)
+        public TrainsController(ITrainsService trainsService)
         {
-            _context = context;
+            this.trainsService = trainsService;
         }
 
         // GET: Trains
-        public async Task<IActionResult> Index(int searchRoute, int searchCategory, int searchSeats, int page = 1)
+        public async Task<IActionResult> Index(TrainsIndex trainsIndex)
         {
 
-            ViewData["CategoryFilter"] = searchCategory;
-            ViewData["RouteIdFilter"] = searchRoute > 0 ? searchRoute : null;
-            ViewData["SeatsFilter"] = searchSeats > 0 ? searchSeats : null;
-
-            ViewData["RouteId"] = await _context.Routes.AsNoTracking().Select(r => new { r.Id }).ToListAsync();
-            ViewData["Categories"] = new SelectList(_context.Categories.AsNoTracking(), "Id", "Name", searchCategory);
-
-            var predicate = PredicateBuilder.New<Train>(true);
-
-            if (searchCategory != 0)
-                predicate.And(e => e.CategoryId == searchCategory);
-
-            if (searchSeats > 0)
-                predicate.And(e => e.SeatsQty >= searchSeats);
-            if (searchRoute > 0)
-                predicate.And(e => e.RouteId == searchRoute);
-
-            var trainsContext = _context.Trains
-                .AsNoTracking()
-                .Where(predicate)
-                .Select(e => new TrainsViewModel
-                {
-                    Id = e.Id,
-                    Category = e.Category.Name,
-                    SeatsQty = e.SeatsQty,
-                    Station = e.Station.Name,
-                    RouteId = e.RouteId
-                });
-
-            return View(await trainsContext.GetPaged(page));
+            return View(await trainsService.GetTrainsIndex(trainsIndex));
         }
 
         // GET: Trains/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var train = await _context.Trains
-                .AsNoTracking()
-                .Include(t => t.Employees)
-                .ThenInclude(empl => empl.Station)
-                .Include(t=> t.Route)
-                .ThenInclude(r=> r.Stations)
-                .ThenInclude(sr => sr.Station)
-                .Select(e => new TrainsViewModel
-                {
-                    Id = e.Id,
-                    Category = e.Category.Name,
-                    SeatsQty = e.SeatsQty,
-                    Station = e.Station.Name,
-                    Route = e.Route,
-                    RouteId = e.RouteId,
-                    Employees = e.Employees
-                })
-                .FirstOrDefaultAsync(m => m.Id == id);
-
+            var train = await trainsService.GetTrainWithDetails(id);
             if (train == null)
             {
                 return NotFound();
@@ -92,177 +46,146 @@ namespace DB_s2_1_1.Controllers
 
             return View(train);
         }
+        
 
         // GET: Trains/Create
         public IActionResult Create()
-        {
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name");
-            ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name");
-            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id");
-            return View();
+        {                
+            return View(trainsService.GetTrainEditing());
         }
+
+        
 
         // POST: Trains/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RouteId,StationId,CategoryId,SeatsQty")] Train train)
+        public async Task<IActionResult> Create(TrainEditing trainsCreate)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(train);
-                await _context.SaveChangesAsync();
+                await trainsService.AddTrain(trainsCreate);
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
-            ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.RouteStations.Select(e => new { RouteId = e.RouteId }).Distinct(), "RouteId", "RouteId");
-            return View(train);
+            return View(trainsService.GetTrainEditing(trainsCreate));
         }
 
-        // GET: Trains/Edit/5
-        public async Task<IActionResult> Edit(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+        
 
-            var train = await _context.Trains.FindAsync(id);
-            if (train == null)
-            {
-                return NotFound();
-            }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
-            ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id", train.RouteId);
-            return View(train);
-        }
+       // GET: Trains/Edit/5
+       public async Task<IActionResult> Edit(int id)
+       {
+
+
+           if (id == 0)
+           {
+               return NotFound();
+           }
+
+           var train = await trainsService.GetTrainEditing(id);
+           if (train == null)
+           {
+               return NotFound();
+           }
+           return View(train);
+       }
+
+        
 
         // POST: Trains/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,RouteId,StationId,CategoryId,SeatsQty")] Train train)
+        public async Task<IActionResult> Edit([Bind("Train, Id, RouteId, CategoryId, StationId, SeatsQty ")]TrainEditing trainEditing)
         {
-            if (id != train.Id)
+            if (trainEditing == null)
             {
                 return NotFound();
             }
 
             if (ModelState.IsValid)
             {
-                try
+                string error = await trainsService.UpdateTrain(trainEditing);
+                if (string.IsNullOrWhiteSpace(error))
                 {
-                    _context.Update(train);
-                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!TrainExists(train.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", error);
             }
-            ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", train.CategoryId);
-            ViewData["StationId"] = new SelectList(_context.Stations, "Id", "Name", train.StationId);
-            ViewData["RouteId"] = new SelectList(_context.Routes, "Id", "Id", train.RouteId);
-            return View(train);
+            
+            return View(trainsService.GetTrainEditing(trainEditing));
         }
 
-        // GET: Trains/Edit/5
-        public async Task<IActionResult> EditBrigade(int? id, int page = 1)
-        {
-            ViewBag.CurPage = page;
-            if (id == null)
-            {
-                return NotFound();
-            }
+        
 
-            var train = await _context.Trains.Include(e => e.Employees)
-                .ThenInclude(empl => empl.Station)
-                .FirstOrDefaultAsync(e => e.Id == id);
+       // GET: 
+       public async Task<IActionResult> EditBrigade(int id, int page = 1)
+       {
+           if (id == 0)
+           {
+               return NotFound();
+           }
 
-            if (train == null)
-            {
-                return NotFound();
-            }
-            ViewBag.Empls = await _context.Employees.AsNoTracking()
-                .Include(e => e.Station)
-                .Include(e => e.Trains)
-                .GetPaged(page);
+           var trainEditBrigade = await trainsService.GetTrainsEditBrigade(id, page);
 
-            return View(train);
-        }
+           if (trainEditBrigade == null)
+           {
+               return NotFound();
+           }
+          
+           return View(trainEditBrigade);
+       }
 
+        
+       [HttpPost]
+       [ValidateAntiForgeryToken]
+       public async Task<IActionResult> EditBrigade(TrainsEditBrigade trainsEditBrigade)
+       {
+           if (trainsEditBrigade == null)
+           {
+               return NotFound();
+           }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> EditBrigade(int id, Train train, int[] SelectedEmpls, int curPage)
-        {
-            Train newTrain = await _context.Trains.Include(t => t.Employees).FirstOrDefaultAsync(e => e.Id == train.Id);
-            if (newTrain == null)
-            {
-                return NotFound();
-            }
-            newTrain.Employees.Clear();
-            if (SelectedEmpls != null)
-            {
-                var empls = await _context.Employees.Where(e => SelectedEmpls.Contains(e.Id)).ToListAsync();
-                foreach (Employee empl in empls)
-                {
-                    newTrain.Employees.Add(empl);
-                }
-            }
-            _context.Entry(newTrain).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
+            string error = await trainsService.UpdateTrainBrigade(trainsEditBrigade);
+            if (!string.IsNullOrWhiteSpace(error))
+                ModelState.AddModelError("", error);
+           
+           return RedirectToAction(nameof(EditBrigade), new {Id = trainsEditBrigade.GetTrainId(), page = trainsEditBrigade.GetPage()});
+       }
+        
 
-            return RedirectToAction(nameof(EditBrigade), new { id = id, page = curPage });
-        }
+       // GET: Trains/Delete/5
+       public async Task<IActionResult> Delete(int id)
+       {
+           if (id == 0)
+           {
+               return NotFound();
+           }
+            
+            var train = await trainsService.GetTrain(id);
+           if (train == null)
+           {
+               return NotFound();
+           }
 
+           return View(train);
+       }
+        
 
-        // GET: Trains/Delete/5
-        public async Task<IActionResult> Delete(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
+       // POST: Trains/Delete/5
+       [HttpPost, ActionName("Delete")]
+       [ValidateAntiForgeryToken]
+       public async Task<IActionResult> DeleteConfirmed(int id)
+       {
+            await trainsService.RemoveTrain(id);
+           return RedirectToAction(nameof(Index));
+       }
 
-            var train = await _context.Trains
-                .Include(t => t.Category)
-                .Include(t => t.Station)
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (train == null)
-            {
-                return NotFound();
-            }
+       
 
-            return View(train);
-        }
+      
 
-        // POST: Trains/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var train = await _context.Trains.FindAsync(id);
-            _context.Trains.Remove(train);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
-
-        private bool TrainExists(int id)
-        {
-            return _context.Trains.Any(e => e.Id == id);
-        }
     }
 }

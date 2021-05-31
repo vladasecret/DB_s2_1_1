@@ -1,4 +1,4 @@
-﻿@model Train
+﻿@model DB_s2_1_1.ViewModel.Trains.TrainsEditBrigade
 @using DB_s2_1_1.EntityModels
 @using DB_s2_1_1.PagedResult
 
@@ -24,14 +24,13 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (Employee item in ((PagedResult<Employee>)ViewBag.Empls).Results)
+            @foreach (Employee item in Model.Empls.Results)
             {
                 <tr>
                     <td>
 
                         <input type="checkbox" name="SelectedEmpls" value="@item.Id"
-                               @(Model.Employees.Where(empl => empl.Id == item.Id).Any() ? "checked" : "") />
-
+                               @(Model.Train.Employees.Where(empl => empl.Id == item.Id).Any() ? "checked" : "") />
                     </td>
                     <td>
                         @item.Id
@@ -48,32 +47,28 @@
     </table>
 
     <div class="form-actions no-color">
-        @for (int i = Math.Max(ViewBag.Empls.CurrentPage - 4, 1); i < ViewBag.Empls.CurrentPage; ++i)
+        @for (int i = Math.Max(Model.Empls.CurrentPage - 4, 1); i < Model.Empls.CurrentPage; ++i)
         {
             <button class="btn btn-primary" type="submit" name="Page" value="@i" formmethod="get">@i</button>
         }
-        <button class="btn btn-primary" type="submit" name="Page" value="@ViewBag.Empls.CurrentPage" disabled formmethod="get">@ViewBag.Empls.CurrentPage</button>
-        @for (int i = ViewBag.Empls.CurrentPage + 1; i <= Math.Min(ViewBag.Empls.CurrentPage + 4, ViewBag.Empls.PageCount); ++i)
+        <button class="btn btn-primary" type="submit" name="Page" value="@Model.Empls.CurrentPage" disabled formmethod="get">@Model.Empls.CurrentPage</button>
+        @for (int i = Model.Empls.CurrentPage + 1; i <= Math.Min(Model.Empls.CurrentPage + 4, Model.Empls.PageCount); ++i)
         {
             <button class="btn btn-primary" type="submit" name="Page" value="@i" formmethod="get">@i</button>
         }
     </div>
-    @if (ViewBag.Empls.PageCount > 1)
+    @if (Model.Empls.PageCount > 1)
     {
         <p style="color:cornflowerblue">when switching to another page of the table, all unsaved items will be lost</p>
     }
     <hr />
-    <input type="hidden" name="CurPage" value="@ViewBag.CurPage"/>
-    <input type="hidden" asp-for="Id" />
-    <input type="hidden" asp-for="RouteId" />
-    <input type="hidden" asp-for="StationId" />
-    <input type="hidden" asp-for="CategoryId" />
-    <input type="hidden" asp-for="SeatsQty" />
+    <input type="hidden" asp-for="Empls.CurrentPage" />
+    <input type="hidden" asp-for="Train.Id" />
     <div class="form-actions no-color">
         <button type="submit" class="btn btn-primary">Save</button>
         <button type="reset" class="btn btn-primary">Reset</button>
     </div>
     <br />
-    <a asp-action="Details" asp-route-id="@Model.Id">Back</a>
+    <a asp-action="Details" asp-route-id="@Model.Train.Id">Back</a>
 </form>
 

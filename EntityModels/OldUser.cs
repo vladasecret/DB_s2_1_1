@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace DB_s2_1_1.EntityModels
 {
-    public class User
+    public class OldUser
     {
      
         public int Id { get; set; }

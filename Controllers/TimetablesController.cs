@@ -97,7 +97,7 @@ namespace DB_s2_1_1.Controllers
 
                 foreach (Station station in stationsOrder)
                 {
-                    distance = getDistance(prevStationId, station.Id);
+                    distance = GetDistance(prevStationId, station.Id);
                     arrivalTime = arrivalTime.AddMinutes(distance / speed * 60);
                     departureTime = arrivalTime.AddMinutes(rand.Next(5, 60));
                     prevStationId = station.Id;
@@ -212,7 +212,7 @@ namespace DB_s2_1_1.Controllers
             return _context.Timetables.Any(e => e.Id == id);
         }
 
-        private double getDistance(int firstId, int secondId)
+        private double GetDistance(int firstId, int secondId)
         {
             return _context.StationRoads.AsNoTracking()
                 .Where(e => (e.FirstStationId == firstId && e.SecondStationId == secondId)

@@ -41,7 +41,7 @@ using DB_s2_1_1.EntityModels;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"b0e6466822c8e9aa747fc19fbb0875f86511718d", @"/Views/Categories/Index.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"3a3790cb0502c37fffe326c6a6c363c21790dd38", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"12d9414e9e94c82eba011d7b5f247195467d8f12", @"/Views/_ViewImports.cshtml")]
     public class Views_Categories_Index : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DB_s2_1_1.PagedResult.PagedResult<Category>>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-action", "Create", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);

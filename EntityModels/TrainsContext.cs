@@ -20,8 +20,9 @@ namespace DB_s2_1_1.EntityModels
         public DbSet<Employee> Employees { get; set; }
         public DbSet<Train> Trains { get; set; }
         public DbSet<Waiting> Waitings { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Role> Roles { get; set; }
+
+        //public DbSet<OldUser> OldUsers { get; set; }
+        //public DbSet<Role> Roles { get; set; }
         public DbSet<Category> Categories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

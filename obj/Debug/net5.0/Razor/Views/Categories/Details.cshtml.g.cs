@@ -34,7 +34,7 @@ using System.Data;
 #line hidden
 #nullable disable
     [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"96f693764ea103728b6c2a377c56ddfd5f352da0", @"/Views/Categories/Details.cshtml")]
-    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"3a3790cb0502c37fffe326c6a6c363c21790dd38", @"/Views/_ViewImports.cshtml")]
+    [global::Microsoft.AspNetCore.Razor.Hosting.RazorSourceChecksumAttribute(@"SHA1", @"12d9414e9e94c82eba011d7b5f247195467d8f12", @"/Views/_ViewImports.cshtml")]
     public class Views_Categories_Details : global::Microsoft.AspNetCore.Mvc.Razor.RazorPage<DB_s2_1_1.EntityModels.Category>
     {
         private static readonly global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute __tagHelperAttribute_0 = new global::Microsoft.AspNetCore.Razor.TagHelpers.TagHelperAttribute("asp-action", "Edit", global::Microsoft.AspNetCore.Razor.TagHelpers.HtmlAttributeValueStyle.DoubleQuotes);
