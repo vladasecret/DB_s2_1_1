@@ -1,5 +1,4 @@
-﻿@model DB_s2_1_1.EntityModels.Timetable
-
+﻿@model DB_s2_1_1.ViewModel.Timetables.TimetablesCreateModel
 @{
     ViewData["Title"] = "Create";
 }
@@ -13,16 +12,16 @@
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label name="TrainId" class="control-label">Train id</label>
-                <select name="TrainId" class="form-control" asp-items="ViewBag.TrainId"></select>
+                <label asp-for="TrainId" class="control-label">Train id</label>
+                <select asp-for="TrainId" class="form-control" asp-items="@Model.TrainsSelectList"></select>
             </div>
             <div class="form-group">
-                <label name="ArrivalTime" class="control-label">Arrival time</label>
-                <input name="ArrivalTime" required min="@DateTime.Now" type="datetime-local" class="form-control" />
+                <label asp-for="ArrivalTime" class="control-label">Arrival time</label>
+                <input asp-for="ArrivalTime" class="form-control" />
             </div>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" type="checkbox" name="TrainDirection" value="@bool.TrueString" /> @Html.DisplayNameFor(model => model.TrainDirection)
+                    <input class="form-check-input" type="checkbox" asp-for="TrainDirection" value="@bool.TrueString" /> @Html.DisplayNameFor(model => model.TrainDirection)
                 </label>
             </div>
             <div class="form-group">

@@ -4,6 +4,7 @@ using FloatingDecimalBinderModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -86,12 +87,18 @@ namespace DB_s2_1_1
             services.AddScoped<IRoutesService, RoutesService>();
             services.AddScoped<ITrainsService, TrainsService>();
             services.AddScoped<IEmployeesService, EmployeesService>();
+            services.AddScoped<ITimetablesService, TimetablesService>();
             services.AddScoped<IUserService, UserService>();
+            
             services.AddScoped<IManualRawSqlService, ManualRawSqlService>();
+
+            services.AddTransient<IEmailSender, EmailSender>();
+            services.Configure<AuthMessageSenderOptions>(Configuration);
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
             services.AddControllersWithViews();
+            services.AddRazorPages();
 
             services.AddMvc(opts =>
             {
@@ -123,6 +130,7 @@ namespace DB_s2_1_1
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller=Home}/{action=Index}/{id?}");
+                endpoints.MapRazorPages();
             });
         }
     }

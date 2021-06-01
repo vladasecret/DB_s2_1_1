@@ -339,8 +339,8 @@ namespace DB_s2_1_1.Migrations
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Waiting", b =>
                 {
                     b.HasOne("DB_s2_1_1.EntityModels.Timetable", "Timetable")
-                        .WithOne("Waiting")
-                        .HasForeignKey("DB_s2_1_1.EntityModels.Waiting", "TimetableId")
+                        .WithMany("Waitings")
+                        .HasForeignKey("TimetableId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -387,7 +387,7 @@ namespace DB_s2_1_1.Migrations
 
             modelBuilder.Entity("DB_s2_1_1.EntityModels.Timetable", b =>
                 {
-                    b.Navigation("Waiting");
+                    b.Navigation("Waitings");
                 });
 #pragma warning restore 612, 618
         }

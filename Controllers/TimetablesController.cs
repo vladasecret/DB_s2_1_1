@@ -7,37 +7,37 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using DB_s2_1_1.EntityModels;
 using DB_s2_1_1.PagedResult;
+using DB_s2_1_1.Services;
+using DB_s2_1_1.ViewModel.Timetables;
 
 namespace DB_s2_1_1.Controllers
 {
     public class TimetablesController : Controller
     {
-        private readonly TrainsContext _context;
+        private readonly ITimetablesService timetablesService;
 
-        public TimetablesController(TrainsContext context)
+        public TimetablesController(ITimetablesService timetablesService)
         {
-            _context = context;
+            this.timetablesService = timetablesService;
         }
 
         // GET: Timetables
         public async Task<IActionResult> Index(int page = 1)
         {
-            var trainsContext = _context.Timetables.Include(t => t.Station).Include(t => t.Train);
-            return View(await trainsContext.AsNoTracking().GetPaged(page));
+
+            return View(await timetablesService.GetTimetablesIndex(page));
         }
 
         // GET: Timetables/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int id)
         {
-            if (id == null)
+            if (id == 0)
             {
                 return NotFound();
             }
 
-            var timetable = await _context.Timetables
-                .Include(t => t.Station)
-                .Include(t => t.Train)
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var timetable = await timetablesService.GetTimetableDetails(id);
+
             if (timetable == null)
             {
                 return NotFound();
@@ -49,8 +49,7 @@ namespace DB_s2_1_1.Controllers
 
         public IActionResult Create()
         {
-            ViewData["TrainId"] = new SelectList(_context.Trains.AsNoTracking().Where(e => e.RouteId != null), "Id", "Id");
-            return View();
+            return View(timetablesService.GetTimetablesCreateModel());
         }
 
         // POST: Timetables/Create
@@ -58,69 +57,25 @@ namespace DB_s2_1_1.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(int trainId, DateTime arrivalTime, bool trainDirection)
+        public async Task<IActionResult> Create(TimetablesCreateModel createModel)
         {
-            Train train = await _context.Trains.AsNoTracking()
-                .Include(t => t.Route)
-                .ThenInclude(r => r.Stations)
-                .ThenInclude(rs => rs.Station)
-                .Include(t => t.Category)
-                .FirstOrDefaultAsync(t => t.Id == trainId);
-            if (train == null)
+            if (createModel == null)
             {
                 return NotFound();
             }
 
-            IQueryable<Timetable> trainTimetables = _context.Timetables.Where(t => t.TrainId == trainId);
-
-            DateTime LastDepartureTime = trainTimetables.Any() ? trainTimetables.Max(t => t.DepartureTime) : DateTime.MinValue;
-            int roadId = trainTimetables.Any() ? trainTimetables.Max(t => t.RoadId) + 1 : 1;
-
-            if (LastDepartureTime.CompareTo(arrivalTime) >= 0)
+            if (ModelState.IsValid)
             {
-                ModelState.AddModelError("Arrival time error", $"Arrival time must be greater than {LastDepartureTime}");
+                string error = await timetablesService.GenerateTimetables(createModel);
+                if (string.IsNullOrWhiteSpace(error))
+                    return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", error);
             }
-
-            else if (ModelState.IsValid)
-            {
-                List<Station> stationsOrder = trainDirection ? train.Route.Stations.OrderByDescending(e => e.StationOrder).Select(e => e.Station).ToList()
-                    : train.Route.Stations.OrderBy(e => e.StationOrder).Select(e => e.Station).ToList();
-
-                double speed = train.Category.Speed;
-                if (speed < 0)
-                    speed = 30;
-
-                int prevStationId = 0;
-                double distance = 0;
-                DateTime departureTime = new();
-                Random rand = new();
-
-                foreach (Station station in stationsOrder)
-                {
-                    distance = GetDistance(prevStationId, station.Id);
-                    arrivalTime = arrivalTime.AddMinutes(distance / speed * 60);
-                    departureTime = arrivalTime.AddMinutes(rand.Next(5, 60));
-                    prevStationId = station.Id;
-
-                    _context.Timetables.Add(new Timetable
-                    {
-                        RoadId = roadId,
-                        TrainId = train.Id,
-                        StationId = station.Id,
-                        ArrivalTime = arrivalTime,
-                        DepartureTime = departureTime,
-                        TrainDirection = trainDirection
-                    });
-
-                }
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            ViewData["RoadId"] = roadId;
-            ViewData["TrainId"] = new SelectList(_context.Trains, "Id", "Id", trainId);
-            return View();
+            
+            createModel.TrainsSelectList = timetablesService.GetTrainsIdSelectList(createModel.TrainId);
+            return View(createModel);
         }
-
+        /*
         // GET: Timetables/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -220,5 +175,6 @@ namespace DB_s2_1_1.Controllers
                 .Select(e => e.Distance)
                 .FirstOrDefault();
         }
+        */
     }
 }

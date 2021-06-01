@@ -17,7 +17,7 @@ namespace DB_s2_1_1.EntityModels
 
         public Train Train { get; set; }
         public Station Station { get; set; }
-        public Waiting Waiting { get; set; }
+        public ICollection<Waiting> Waitings { get; set; }
        
     }
 }
